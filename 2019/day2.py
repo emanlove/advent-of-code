@@ -25,6 +25,19 @@ def loadProgram(pfile):
     
     return programInt
 
+def match_nv_output(file):
+    
+    for noun in range(100):
+        for verb in range(100):
+            program = loadProgram(file)
+            program[1] = noun
+            program[2] = verb
+            result = executeProgram(program)
+
+            if result[0]==19690720:
+                return (noun,verb)
+    return (None,None)
+    
 if __name__ == "__main__":
     progfile = sys.argv[1]
 
@@ -34,3 +47,8 @@ if __name__ == "__main__":
     result = executeProgram(program)
 
     print(f"The Intcode program results with {result[0]} in position 0.")
+
+    (n,v) = match_nv_output(progfile)
+
+    print(f"Using noun [{n}] and verb [{v}] the Intcode program results with 19690720.")
+    print(f"Answer: {100*n+v}")

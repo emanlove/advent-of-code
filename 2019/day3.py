@@ -47,7 +47,8 @@ def doesIntersect(vlineseg,hlineseg):
 
 def manhattanDistance(vlineseg,hlineseg):
     if (hlineseg[0][0] < vlineseg[0] < hlineseg[0][1]) and (vlineseg[1][0] < hlineseg[1] < vlineseg[1][1]):
-        return vlineseg[0]+hlineseg[1]
+        #print(f"v:{vlineseg} h:{hlineseg}")
+        return abs(vlineseg[0])+abs(hlineseg[1])
     else:
         return None
 
@@ -64,4 +65,4 @@ if __name__ == "__main__":
     havb = [manhattanDistance(v,h) for h in ha for v in vb]
 
     closest_dist = min([i for i in hbva if i is not None] + [i for i in havb if i is not None])
-    print(f"The minimum Mahattan Dostance to an intersection is {closest_dist}")
+    print(f"The minimum Mahattan Distance to an intersection is {closest_dist}")

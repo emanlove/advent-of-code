@@ -11,6 +11,7 @@ def getVerticalHorizontalLines(wire):
     horizontals = []
     cur_x = 0
     cur_y = 0
+    steps_to_this_segment = 0
 
     movements = wire.split(',')
 
@@ -20,33 +21,35 @@ def getVerticalHorizontalLines(wire):
 
         if direction=='U':
             nex_y = cur_y + distance
-            verticals.append({'x':cur_x,'y':(cur_y,nex_y)})
+            verticals.append({'x':cur_x,'y':{'min':cur_y,'max':nex_y}, 'steps_to':steps_to_this_segment, 'incoming_end':'min'})
             cur_y = nex_y
         elif direction=='D':
             nex_y = cur_y - distance
-            verticals.append({'x':cur_x,'y':(nex_y,cur_y)})
+            verticals.append({'x':cur_x,'y':{'min':nex_y,'max':cur_y}, 'steps_to':steps_to_this_segment, 'incoming_end':'max'})
             cur_y = nex_y
         elif direction=='L':
             nex_x = cur_x - distance
-            horizontals.append({'x':(nex_x,cur_x),'y':cur_y})
+            horizontals.append({'x':{'min':nex_x,'max':cur_x},'y':cur_y, 'steps_to':steps_to_this_segment, 'incoming_end':'max'})
             cur_x = nex_x
         elif direction=='R':
             nex_x = cur_x + distance
-            horizontals.append({'x':(cur_x,nex_x),'y':cur_y})
+            horizontals.append({'x':{'min':cur_x,'max':nex_x},'y':cur_y, 'steps_to':steps_to_this_segment, 'incoming_end':'min'})
             cur_x = nex_x
         else:
             print(f"Error - Unkown Direction: {direction}")
 
+        steps_to_this_segment += distance
+
     return verticals,horizontals
 
 def doesIntersect(vlineseg,hlineseg):
-    if (hlineseg['x'][0] < vlineseg['x'] < hlineseg['x'][1]) and (vlineseg['y'][0] < hlineseg['y'] < vlineseg['y'][1]):
-        return (vlineseg['x'],hlineseg[1])
+    if (hlineseg['x']['min'] < vlineseg['x'] < hlineseg['x']['max']) and (vlineseg['y']['min'] < hlineseg['y'] < vlineseg['y']['max']):
+        return (vlineseg['x'],hlineseg['y'])
     else:
         return (None,None)
 
 def manhattanDistance(vlineseg,hlineseg):
-    if (hlineseg['x'][0] < vlineseg['x'] < hlineseg['x'][1]) and (vlineseg['y'][0] < hlineseg['y'] < vlineseg['y'][1]):
+    if (hlineseg['x']['min'] < vlineseg['x'] < hlineseg['x']['max']) and (vlineseg['y']['min'] < hlineseg['y'] < vlineseg['y']['max']):
         #print(f"v:{vlineseg} h:{hlineseg}")
         return abs(vlineseg['x'])+abs(hlineseg['y'])
     else:

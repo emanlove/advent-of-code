@@ -20,19 +20,19 @@ def getVerticalHorizontalLines(wire):
 
         if direction=='U':
             nex_y = cur_y + distance
-            verticals.append((cur_x,(cur_y,nex_y)))
+            verticals.append({'x':cur_x,'y':(cur_y,nex_y)})
             cur_y = nex_y
         elif direction=='D':
             nex_y = cur_y - distance
-            verticals.append((cur_x,(nex_y,cur_y)))
+            verticals.append({'x':cur_x,'y':(nex_y,cur_y)})
             cur_y = nex_y
         elif direction=='L':
             nex_x = cur_x - distance
-            horizontals.append(((nex_x,cur_x),cur_y))
+            horizontals.append({'x':(nex_x,cur_x),'y':cur_y})
             cur_x = nex_x
         elif direction=='R':
             nex_x = cur_x + distance
-            horizontals.append(((cur_x,nex_x),cur_y))
+            horizontals.append({'x':(cur_x,nex_x),'y':cur_y})
             cur_x = nex_x
         else:
             print(f"Error - Unkown Direction: {direction}")
@@ -40,15 +40,15 @@ def getVerticalHorizontalLines(wire):
     return verticals,horizontals
 
 def doesIntersect(vlineseg,hlineseg):
-    if (hlineseg[0][0] < vlineseg[0] < hlineseg[0][1]) and (vlineseg[1][0] < hlineseg[1] < vlineseg[1][1]):
-        return (vlineseg[0],hlineseg[1])
+    if (hlineseg['x'][0] < vlineseg['x'] < hlineseg['x'][1]) and (vlineseg['y'][0] < hlineseg['y'] < vlineseg['y'][1]):
+        return (vlineseg['x'],hlineseg[1])
     else:
         return (None,None)
 
 def manhattanDistance(vlineseg,hlineseg):
-    if (hlineseg[0][0] < vlineseg[0] < hlineseg[0][1]) and (vlineseg[1][0] < hlineseg[1] < vlineseg[1][1]):
+    if (hlineseg['x'][0] < vlineseg['x'] < hlineseg['x'][1]) and (vlineseg['y'][0] < hlineseg['y'] < vlineseg['y'][1]):
         #print(f"v:{vlineseg} h:{hlineseg}")
-        return abs(vlineseg[0])+abs(hlineseg[1])
+        return abs(vlineseg['x'])+abs(hlineseg['y'])
     else:
         return None
 

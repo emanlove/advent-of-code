@@ -8,22 +8,24 @@ def loadDeclarationForms(formfile):
     if lines[-1] != '\n':
         lines.append('\n')
         
-    buffer = ''
+    buffer = []
     for line in lines:
         if line =='\n':
             forms.append(buffer)
-            buffer = ''
+            buffer = []
         else:
-            
-            buffer += line.strip('\n')
+            buffer.append(line.strip('\n'))
         
     return forms
 
-def numQuestionsAnswerYesTo(form):
+def numQuestionsAnswerYesTo(group):
     numYes = 0
     a_zCHARS = [chr(ord('a')+i) for i in range(26)]
 
-    for question in form:
+    individuals = [set(indv) for indv in group]
+    agreedUponQuestions = list(individuals[0].intersection(*individuals))
+    
+    for question in agreedUponQuestions:
         if question in a_zCHARS:
             numYes += 1
             a_zCHARS.pop(a_zCHARS.index(question))
@@ -36,5 +38,4 @@ if __name__ == "__main__":
     declaration_forms = loadDeclarationForms(file)
 
     total_yeses = sum(numQuestionsAnswerYesTo(group) for group in declaration_forms)
-    print(f"The total number of questions answred by all groups is {total_yeses}")
-        
+    print(f"The total number of questions answered by all groups is {total_yeses}")

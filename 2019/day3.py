@@ -44,16 +44,13 @@ def getVerticalHorizontalLines(wire):
 
 def doesIntersect(vlineseg,hlineseg):
     if (hlineseg['x']['min'] < vlineseg['x'] < hlineseg['x']['max']) and (vlineseg['y']['min'] < hlineseg['y'] < vlineseg['y']['max']):
-        return (vlineseg['x'],hlineseg['y'])
+        hor_step_delay = hlineseg['steps_to'] + ((hlineseg['x']['max'] - vlineseg['x']) if hlineseg['incoming_end']=='max' else (vlineseg['x'] - hlineseg['x']['min']))
+        ver_step_delay = vlineseg['steps_to'] + ((vlineseg['y']['max'] - hlineseg['y']) if vlineseg['incoming_end']=='max' else (hlineseg['y'] - vlineseg['y']['min']))
+        total_step_delay = hor_step_delay + ver_step_delay
+        manhattan_distance = abs(vlineseg['x'])+abs(hlineseg['y'])
+        return (manhattan_distance,total_step_delay)
     else:
         return (None,None)
-
-def manhattanDistance(vlineseg,hlineseg):
-    if (hlineseg['x']['min'] < vlineseg['x'] < hlineseg['x']['max']) and (vlineseg['y']['min'] < hlineseg['y'] < vlineseg['y']['max']):
-        #print(f"v:{vlineseg} h:{hlineseg}")
-        return abs(vlineseg['x'])+abs(hlineseg['y'])
-    else:
-        return None
 
 if __name__ == "__main__":
     wirefile = sys.argv[1]
@@ -64,8 +61,10 @@ if __name__ == "__main__":
     va,ha = getVerticalHorizontalLines(wires[0])
     vb,hb = getVerticalHorizontalLines(wires[1])
 
-    hbva = [manhattanDistance(v,h) for h in hb for v in va]
-    havb = [manhattanDistance(v,h) for h in ha for v in vb]
+    hbva = [doesIntersect(v,h) for h in hb for v in va]
+    havb = [doesIntersect(v,h) for h in ha for v in vb]
 
-    closest_dist = min([i for i in hbva if i is not None] + [i for i in havb if i is not None])
-    print(f"The minimum Mahattan Distance to an intersection is {closest_dist}")
+    closest_mdist = min([i[0] for i in hbva if i[0] is not None] + [i[0] for i in havb if i[0] is not None])
+    closest_rdist = min([i[1] for i in hbva if i[1] is not None] + [i[1] for i in havb if i[1] is not None])
+    print(f"The minimum Mahattan Distance to an intersection is {closest_mdist}")
+    print(f"The minimum Relay Distance to an intersection is {closest_rdist}")

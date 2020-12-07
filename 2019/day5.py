@@ -31,32 +31,37 @@ def _opcode(value):
         return thirdpmode,secondpmode,firstpmode,operation
     
     
-def executeMultiCodeProgram(program,input=None,output=None):
+def executeMultiCodeProgram(program,input=None):
     thirdpmode,secondpmode,firstpmode,operation = _opcode(program[0])
     
     pindx = 0
     
     while operation != '99':
         if operation=='01':
-            print(f"{program[pindx:pindx+4]}")
-            program[program[pindx+3]] = program[program[pindx+1]] + program[program[pindx+2]]
+            #print(f"{program[pindx:pindx+4]}")
+            program[program[pindx+3]] = (program[pindx+1] if firstpmode else program[program[pindx+1]]) + \
+              (program[pindx+2] if secondpmode else program[program[pindx+2]])
+            #program[program[pindx+3]] = program[program[pindx+1]] + program[program[pindx+2]]
             pindx += 4
         elif operation=='02':
-            print(f"{program[pindx:pindx+4]}")
-            program[program[pindx+3]] = program[program[pindx+1]] * program[program[pindx+2]]
+            #print(f"{program[pindx:pindx+4]}")
+            program[program[pindx+3]] = (program[pindx+1] if firstpmode else program[program[pindx+1]]) * \
+              (program[pindx+2] if secondpmode else program[program[pindx+2]])
+            #program[program[pindx+3]] = program[program[pindx+1]] * program[program[pindx+2]]
             pindx += 4
         elif operation=='03':
-            print(f"{program[pindx:pindx+2]}")
+            #print(f"{program[pindx:pindx+2]}")
             program[program[pindx+1]] = input
             pindx += 2
         elif operation=='04':
             print(f"output: {program[program[pindx+1]]}")
-            pass
+            pindx += 2
+            #import pdb;pdb.set_trace()
         else:
             print(f"Error - Illegal opcode:{opcode}")
 
         thirdpmode,secondpmode,firstpmode,operation = _opcode(program[pindx])
-        print(f"new opcode: {operation}")
+        #print(f"new opcode: {operation}")
     return program
 
 def loadProgram(pfile):
@@ -87,7 +92,7 @@ if __name__ == "__main__":
     program = loadProgram(progfile)
     #program[1] = 12
     #program[2] = 2
-    result = executeMultiCodeProgram(program)
+    result = executeMultiCodeProgram(program,1)
 
     print(f"{result}")
     print(f"The Intcode program results with {result[0]} in position 0.")

@@ -6,6 +6,10 @@ def read_boot_code(filename):
 
     return boot_code
 
+def _operation(line,program):
+    operation,argument = program[line].split()
+    return operation
+    
 if __name__ == "__main__":
     file = sys.argv[1]
     boot_code = read_boot_code(file)
@@ -15,6 +19,9 @@ if __name__ == "__main__":
 
     ipntr = 0
     while True:
+        if ipntr == len(boot_code):
+            print(f"COMPLETED: Boot code completed execution!  accumulator:{accumulator}")
+            break
         if visited_line[ipntr]:
             print(f"WARNING: Infinite Loop discovered! accumulator:{accumulator}")
             break
@@ -29,6 +36,12 @@ if __name__ == "__main__":
             ipntr += 1
         elif operation=='jmp':
             ipntr += int(argument)
+            if ipntr > len(boot_code) or ipntr < 0:
+                print(f"ERROR: jmp operation out of bounds - {ipntr-int(argument)}->{ipntr}")
+                break
         else:
             print(f"ERROR: Unknown operation - {ipntr}:{operation}")
             break
+
+    nop_before_infinite_loop = [line for line,visited in enumerate(visited_line) if _operation(line,boot_code)=='nop']
+    jmp_before_infinite_loop = [line for line,visited in enumerate(visited_line) if _operation(line,boot_code)=='jmp']

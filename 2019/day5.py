@@ -54,9 +54,11 @@ def executeMultiCodeProgram(program,input=None):
             program[program[pindx+1]] = input
             pindx += 2
         elif operation=='04':
+            print(f"{program[pindx:pindx+2]}")
             print(f"output: {program[program[pindx+1]]}")
+            #if program[program[pindx+1]] != 0:
+            #    print(f"{program[pindx:pindx+2]}")
             pindx += 2
-            #import pdb;pdb.set_trace()
         else:
             print(f"Error - Illegal opcode:{opcode}")
 
@@ -94,7 +96,7 @@ if __name__ == "__main__":
     #program[2] = 2
     result = executeMultiCodeProgram(program,1)
 
-    print(f"{result}")
+    #print(f"{result}")
     print(f"The Intcode program results with {result[0]} in position 0.")
 
     #(n,v) = match_nv_output(progfile)

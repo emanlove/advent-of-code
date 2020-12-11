@@ -14,10 +14,21 @@ def build_map(seating_chart):
     all_seats = ''.join(seating_chart)
     seats = [indx for indx,this_spot in enumerate(all_seats) if this_spot != '.']
     for seat in seats:
-        all_neighbors = [
-            seat-nCols-1, seat-nCols, seat-nCols+1,
-            seat-1                  , seat+1,
-            seat+nCols-1, seat+nCols, seat+nCols+1 ]
+        #all_neighbors = [
+        #    seat-nCols-1, seat-nCols, seat-nCols+1,
+        #    seat-1                  , seat+1,
+        #    seat+nCols-1, seat+nCols, seat+nCols+1 ]
+        row = int(seat/nCols)
+        col = seat%nCols
+        all_neighbors = []
+        all_neighbors += [seat-nCols-1] if row>0 and col>0 else []
+        all_neighbors += [seat-nCols] if row>0 else []
+        all_neighbors += [seat-nCols+1] if row>0 and col<nCols-1 else []
+        all_neighbors += [seat-1] if col>0 else []
+        all_neighbors += [seat+1] if col<nCols-1 else []
+        all_neighbors += [seat+nCols-1] if row<nRows-1 and col>0 else []
+        all_neighbors += [seat+nCols] if row<nRows-1 else []
+        all_neighbors += [seat+nCols+1] if row<nRows-1 and col<nCols-1 else []
         neighbors_with_seats = [neighbor for neighbor in all_neighbors if neighbor in seats]
         seat_map[seat] = {'neighbors': neighbors_with_seats,
                      'occupied': (True if all_seats[seat]=='#' else False)

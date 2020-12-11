@@ -14,10 +14,6 @@ def build_map(seating_chart):
     all_seats = ''.join(seating_chart)
     seats = [indx for indx,this_spot in enumerate(all_seats) if this_spot != '.']
     for seat in seats:
-        #all_neighbors = [
-        #    seat-nCols-1, seat-nCols, seat-nCols+1,
-        #    seat-1                  , seat+1,
-        #    seat+nCols-1, seat+nCols, seat+nCols+1 ]
         row = int(seat/nCols)
         col = seat%nCols
         all_neighbors = []
@@ -51,8 +47,8 @@ if __name__ == "__main__":
     chart = read_seating_chart(file)
     seat_map,nrows,ncols = build_map(chart)
 
-    hasStabilized = 0
-    while hasStabilized<2:
+    hasStabilized = False
+    while not hasStabilized:
         print_map(seat_map,nrows,ncols)
         changeset = []
         for seat in seat_map:
@@ -66,8 +62,8 @@ if __name__ == "__main__":
         if changeset:
             for change in changeset:
                 seat_map[change[0]]['occupied'] = change[1]
-            if hasStabilized:
-                hasStabilized -= 1
         else:
-            hasStabilized += 1
+            hasStabilized = True
 
+    total_occupied_seats = sum(1 for seat in seat_map if seat_map[seat]['occupied'])
+    print(f"The total number of occupied seats are {total_occupied_seats}")

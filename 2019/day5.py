@@ -55,7 +55,8 @@ def executeMultiCodeProgram(program,input=None):
             pindx += 2
         elif operation=='04':
             print(f"{program[pindx:pindx+2]}")
-            print(f"output: {program[program[pindx+1]]}")
+            #print(f"output: {program[program[pindx+1]]}")
+            print(f"output: {program[pindx+1] if firstpmode else program[program[pindx+1]]}")
             #if program[program[pindx+1]] != 0:
             #    print(f"{program[pindx:pindx+2]}")
             pindx += 2

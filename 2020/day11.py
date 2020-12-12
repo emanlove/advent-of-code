@@ -6,6 +6,71 @@ def read_seating_chart(filename):
 
     return seating_chart
 
+def get_lineofsight_neighbor(seat,seats,nRows,nCols):
+    row = int(seat/nCols)
+    col = seat%nCols
+
+    nearest_neighbors = []
+
+    # direction 1
+    if row>0 and col>0:
+        steps_to_edge = min(row,col)
+        line_of_sight_cords = list(zip(range(row-1,row-1-steps_to_edge,-1),range(col-1,col-1-steps_to_edge,-1)))
+        line_of_sight = [cord_pair[0]*nCols+cord_pair[1] for cord_pair in line_of_sight_cords]
+        chairs_in_lineofsight = [chair for chair in line_of_sight if chair in seats]
+        nearest_neighbors += chairs_in_lineofsight[0] if chairs_in_lineofsight else []
+    # direction 2
+    if row>0:
+        steps_to_edge = row
+        line_of_sight_cords = list(zip(range(row-1,row-1-steps_to_edge,-1),[col]*steps_to_edge))
+        line_of_sight = [cord_pair[0]*nCols+cord_pair[1] for cord_pair in line_of_sight_cords]
+        chairs_in_lineofsight = [chair for chair in line_of_sight if chair in seats]
+        nearest_neighbors += chairs_in_lineofsight[0] if chairs_in_lineofsight else []
+    # direction 3
+    if row>0 and col<nCols-1:
+        steps_to_edge = min(row,nCols-col+1)
+        line_of_sight_cords = list(zip(range(row-1,row-1-steps_to_edge,-1),range(col+1,nCols)))
+        line_of_sight = [cord_pair[0]*nCols+cord_pair[1] for cord_pair in line_of_sight_cords]
+        chairs_in_lineofsight = [chair for chair in line_of_sight if chair in seats]
+        nearest_neighbors += chairs_in_lineofsight[0] if chairs_in_lineofsight else []
+    # direction 4
+    if col>0:
+        steps_to_edge = col
+        line_of_sight_cords = list(zip([row]*steps_to_edge,range(col-1,col-1-steps_to_edge,-1)))
+        line_of_sight = [cord_pair[0]*nCols+cord_pair[1] for cord_pair in line_of_sight_cords]
+        chairs_in_lineofsight = [chair for chair in line_of_sight if chair in seats]
+        nearest_neighbors += chairs_in_lineofsight[0] if chairs_in_lineofsight else []
+    # direction 5
+    if col<nCols-1:
+        steps_to_edge = nCols-col+1
+        line_of_sight_cords = list(zip([row]*steps_to_edge,range(col+1,nCols)))
+        line_of_sight = [cord_pair[0]*nCols+cord_pair[1] for cord_pair in line_of_sight_cords]
+        chairs_in_lineofsight = [chair for chair in line_of_sight if chair in seats]
+        nearest_neighbors += chairs_in_lineofsight[0] if chairs_in_lineofsight else []
+    # direction 6
+    if row<nRows-1 and col>0:
+        steps_to_edge = min(nRows-row+1,col)
+        line_of_sight_cords = list(zip(range(row+1,nRows),range(col-1,col-1-steps_to_edge,-1)))
+        line_of_sight = [cord_pair[0]*nCols+cord_pair[1] for cord_pair in line_of_sight_cords]
+        chairs_in_lineofsight = [chair for chair in line_of_sight if chair in seats]
+        nearest_neighbors += chairs_in_lineofsight[0] if chairs_in_lineofsight else []
+    # direction 7
+    if row<nRows-1:
+        steps_to_edge = nRows-row+1
+        line_of_sight_cords = list(zip(range(row+1,nRows),[col]*steps_to_edge))
+        line_of_sight = [cord_pair[0]*nCols+cord_pair[1] for cord_pair in line_of_sight_cords]
+        chairs_in_lineofsight = [chair for chair in line_of_sight if chair in seats]
+        nearest_neighbors += chairs_in_lineofsight[0] if chairs_in_lineofsight else []
+    # direction 8
+    if row<nRows-1 and col<nCols-1:
+        steps_to_edge = min(nRows-row+1,nCols-col+1)
+        line_of_sight_cords = list(zip(range(row+1,nRows),range(col+1,nCols)))
+        line_of_sight = [cord_pair[0]*nCols+cord_pair[1] for cord_pair in line_of_sight_cords]
+        chairs_in_lineofsight = [chair for chair in line_of_sight if chair in seats]
+        nearest_neighbors += chairs_in_lineofsight[0] if chairs_in_lineofsight else []
+
+    return nearest_neighbors
+
 def build_map(seating_chart):
     seat_map = {}
     nRows = len(seating_chart)

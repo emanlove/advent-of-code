@@ -18,33 +18,31 @@ def move(here,direct,dist):
     elif direct=='W':
         there[0] -= dist
 
-if __name__ == "__main__":
-    file = sys.argv[]1
+    return there
 
-    chart = read_navigation_instrct(file)
+if __name__ == "__main__":
+    file = sys.argv[1]
+
+    directions = read_navigation_instrct(file)
 
     current_orientation = 0    # 'E'
-    start_pos = (0,0)
+    start_pos = [0,0]
 
     pos = start_pos
     for movement in directions:
         direction = movement[0]
         distance  = int(movement[1:])
 
-        if direction=='N':
-            pass
-        elif direction=='E':
-            pass
-        elif direction=='S':
-            pass
-        elif direction=='W':
-            pass
-        elif direction=='F':
-            pass
-        elif direction=='L':
-            current_orientation = (current_orientation - int(distnce/90)) % 4 
+        if direction=='L':
+            current_orientation = (current_orientation - int(distance/90)) % 4 
         elif direction=='R':
-            current_orientation = (current_orientation + int(distnce/90)) % 4 
+            current_orientation = (current_orientation + int(distance/90)) % 4
+        elif direction=='F':
+            pos = move(pos, COMPASS_ROSE[current_orientation], distance)
+        elif direction in COMPASS_ROSE:
+            pos = move(pos, direction, distance)
         else:
             print(f"ERROR: Unknown direction - {direction}")
-        pass
+
+    manhattan_distance=abs(pos[0])+abs(pos[1])
+    print(f"The current Manhattan Distance from start is {manhattan_distance}")

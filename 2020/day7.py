@@ -47,6 +47,11 @@ def bagParents(bag,rules):
             parents.append(rule)
     return parents
 
+def bagChildren(bag,rules):
+    num_children = 0
+
+    children = rules[bag]
+    
 def outmostBag(bag,rules):
     parents = []
     for rule in rules:
@@ -74,7 +79,6 @@ if __name__ == "__main__":
     outerbags = []
     needtofindaparent = ['shinygold']
 
-    #import pdb;pdb.set_trace()
     while len(needtofindaparent) > 0:
         child = needtofindaparent.pop()
 
@@ -89,3 +93,13 @@ if __name__ == "__main__":
             needtofindaparent += parents
 
     print(f"The outermost bags include {outerbags}:{len(outerbags)}.")
+
+    import pdb;pdb.set_trace()
+    for child in baggage_rules['shinygold']:
+        if not baggage_rules[child]:
+            #stop looking for children
+            pass
+        else:
+            #go back an call getKids again
+            pass
+        

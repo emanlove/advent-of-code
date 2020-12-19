@@ -23,8 +23,9 @@ def updateMask(instruction):
     _,mask = instruction.split(' = ')
     ones=[indx for indx,bit in enumerate(mask[::-1]) if bit=='1']
     zeros=[indx for indx,bit in enumerate(mask[::-1]) if bit=='0']
+    xes=[indx for indx,bit in enumerate(mask[::-1]) if bit=='X']
 
-    return ones,zeros
+    return ones,zeros,xes
 
 def parseMemoryInstruction(instruction):
     addrStr,valStr=instruction.split(' = ')
@@ -43,20 +44,25 @@ if __name__ == "__main__":
     memory = {}
     for line in program:
         if isBitMaskInstruction(line):
-            ones,zeros = updateMask(line)
+            ones,zeros,xes = updateMask(line)
         else:
             address,value = parseMemoryInstruction(line)
-            #print(f"{value:036b}")
+            #print(f"{address:036b}")
             for one in ones:
-                value = set_bit(value,one)
-                #print(f"{value:036b}")
-            for zero in zeros:
-                value = clear_bit(value,zero)
-                #print(f"{value:036b}")
+                address = set_bit(address,one) 
+                #print(f"{address:036b}")
 
- 
-            #print(f"{address}:{value}")
-            memory[address] = value
+            numXes = len(xes)
+            addrMasks = [f'{n:0{numXes}b}' for n in range(2**numXes)]
+            for mask in addrMasks:
+                addr36Bin = list(f'{address:036b}')
+                for bit,x in enumerate(xes):
+                    addr36Bin[-x-1]=mask[bit]
+
+                addr36Str = ''.join(addr36Bin) 
+                addr = int(addr36Str,base=2)
+                #print(f"{addr36Str}  {addr}:{value}")
+                memory[addr] = value
 
     mem_total = sum(memory[a] for a in memory)
     print(f"The total in the memory is {mem_total}")

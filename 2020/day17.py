@@ -50,9 +50,9 @@ if __name__ == "__main__":
         #limits = get_space_limits(active_cubes)
         (xmin,xmax),(ymin,ymax),(zmin,zmax)  = get_space_limits(active_cubes)
         
-        for x in range(xmin,xmax+1):
-            for y in range(ymin,ymax+1):
-                for z in range(zmin,zmax+1):
+        for x in range(xmin-1,xmax+2):
+            for y in range(ymin-1,ymax+2):
+                for z in range(zmin-1,zmax+2):
                     here = (x,y,z)
 
                     if here in active_cubes:
@@ -67,5 +67,6 @@ if __name__ == "__main__":
                             next_active.append(here)
 
         active_cubes = next_active
+        #print(f"The number of active cubes after {cycle} cycles is {len(active_cubes)}")
 
     print(f"The number of active cubes after {cycles} cycles is {len(active_cubes)}")

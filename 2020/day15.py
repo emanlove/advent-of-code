@@ -15,20 +15,21 @@ if __name__ == "__main__":
 
     starting_nums = read_starting_numbers(file)
 
-    import pdb;pdb.set_trace()
     called_out = {}
     for position,start_num in enumerate(starting_nums[:-1]):
-        called_out[start_num] = position+1
+        called_out[start_num] = position
 
     previous_num = starting_nums[-1]
-    for turn in range(len(starting_nums)+1,nthNumber+1):
+    for turn in range(len(starting_nums),nthNumber):
         if previous_num in called_out:
-            saying = turn - called_out[previous_num] - 1
-            called_out[saying] = turn
+            saying = turn - 1 - called_out[previous_num]
+            #print(f"{turn-1} - {called_out[previous_num]} : {saying}")
+            called_out[previous_num] = turn - 1
         else:
             saying = 0
-            #called_out[saying] = turn
-        previous_num = saying
-        print(f"The number said on turn {turn} was {previous_num}")
+            called_out[previous_num] = turn - 1
 
-    print(f"The number said on turn {turn} was {previous_num}")
+        previous_num = saying
+        #print(f"The number said on turn {turn+1} was {previous_num}")
+
+    print(f"The number said on turn {turn+1} was {previous_num}")

@@ -42,10 +42,30 @@ if __name__ == "__main__":
     all_rules_unique = list(set(all_rules))
 
     error_rate = 0
+    valid_nearby_tickets = []
     for nearby_ticket in nearby_tickets:
+        all_fields_valid = True
         for field in nearby_ticket:
             if field not in all_rules_unique:
                 error_rate += field
-
+                all_fields_valid = False
+        if all_fields_valid:
+            valid_nearby_tickets.append(nearby_ticket)
+            
     print(f"The ticket scanning error rate is {error_rate}")
-    
+
+    ordered_ticket_fields = []
+    for position,value in enumerate(my_ticket):
+        fieldValues = [value] + [nearby_ticket[position] for nearby_ticket in valid_nearby_tickets]
+
+        for rule in rules:
+            # Here I prefer to pop the dictionary value but that is not possible. So instead
+            # I just check to see if this rule is already accepted.
+            if rule in ordered_ticket_fields:
+                continue
+            if all(True if fieldValue in rules[rule] else False for fieldValue in fieldValues):
+                #rules.pop(rule)  #
+                ordered_ticket_fields.append(rule)
+            
+    print(f"The ticket fields are {ordered_ticket_fields}")
+    print(f"Your ticket: {[(field,my_ticket[index]) for index,field in enumerate(ordered_ticket_fields)]}")

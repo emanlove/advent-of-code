@@ -21,6 +21,23 @@ def solve(exp):
         print(f"{exp}: {sorted}")
 
     return 0
+def calculate(exp):
+    while len(exp) > 1:
+        running_total = exp[0]
+        if running_total == '(':
+            pass
+        operator = exp[1]
+        modifier = exp[2]
+        if modifier == '(':
+            pass
+
+        if operator == '+':
+            pass
+        elif operator == '*':
+            pass
+        else:
+            print('Error: unknown operator {operator}')
+
 # def sort_pairs(pairs,start_indx):
 #     sorted_pairs = []
 #     for current_pair in pairs[start_indx:]:

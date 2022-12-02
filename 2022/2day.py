@@ -1,6 +1,7 @@
 import sys
 
-ASSUMED_SCORE = {
+#ASSUMED_SCORING_STRATEGY 
+partial = {
     'A X': 1 + 3,
     'A Y': 2 + 6,
     'A Z': 3 + 0,
@@ -12,7 +13,8 @@ ASSUMED_SCORE = {
     'C Z': 3 + 3,
 }
 
-CORRECTED_SCORE = {
+#ACTUAL_SCORING_STRATEGY
+full = {
     'A X': 3 + 0,
     'A Y': 1 + 3,
     'A Z': 2 + 6,
@@ -24,33 +26,32 @@ CORRECTED_SCORE = {
     'C Z': 1 + 6,
 }
 
-def read_file(filename):
+def read_strategy(filename):
     with open(filename,'r') as fh:
         lines = [line.rstrip('\n') for line in fh]
 
     return lines
 
-def strategy_score(strategy):
+def strategy_score(strategy,knowledge):
     score = 0
     for game in strategy:
-        score += CORRECTED_SCORE[game]
+        score += globals()[knowledge][game]
     
     return score
 
 if __name__ == "__main__":
     file = sys.argv[1]
-    data = read_file(file)
+    understanding = sys.argv[2]
+    strategy = read_strategy(file)
 
-    #import pdb;pdb.set_trace()
-    end_score = strategy_score(data)
+    end_score = strategy_score(strategy, understanding)
     print(f"The end score would be {end_score}.")
 
-    part1_ans = end_score
-    part2_ans = end_score
+    part1_ans = part2_ans = end_score
 
-    if len(sys.argv) == 3:
-        if int(sys.argv[2]) == part1_ans:
-            print(f"Answer for part 1 is correct!")
     if len(sys.argv) == 4:
-        if int(sys.argv[3]) == part2_ans:
+        if int(sys.argv[3]) == part1_ans:
+            print(f"Answer for part 1 is correct!")
+    if len(sys.argv) == 5:
+        if int(sys.argv[4]) == part2_ans:
             print(f"Answer for part 2 is correct!")

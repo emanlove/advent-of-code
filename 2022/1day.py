@@ -25,3 +25,9 @@ if __name__ == "__main__":
     elves_calories.sort(reverse=True)
     print(f"The most calories are {max(elves_calories)}.")
     print(f"The total of the top three calories are {sum(elves_calories[:3])}.")
+    if len(sys.argv) == 3:
+        if int(sys.argv[2]) == max(elves_calories):
+            print(f"Answer for part 1 is correct!")
+    if len(sys.argv) == 4:
+        if int(sys.argv[3]) == sum(elves_calories[:3]):
+            print(f"Answer for part 2 is correct!")

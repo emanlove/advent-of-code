@@ -13,11 +13,13 @@ def is_exclusively_cleaning_sections(group):
     elf_assignment_sets = []
     elves = group.split(',')
     for elf in elves:
-        start, end = num_notation.split('-')
+        start, end = elf.split('-')
         elf_assignment_sets.append(set(range(int(start),int(end)+1)))
         
-    # basing this off of only two in group
-    return ( (elf_assignment_sets[0] <= elf_assignment_sets[1]) or (elf_assignment_sets[1] <= elf_assignment_sets[0]) )
+    # part 1 - check for exclusivity
+    #return ( (elf_assignment_sets[0] <= elf_assignment_sets[1]) or (elf_assignment_sets[1] <= elf_assignment_sets[0]) )
+    # part 2 .. just check if any overlap
+    return bool (elf_assignment_sets[0] & elf_assignment_sets[1])
 
 if __name__ == "__main__":
     file = sys.argv[1]
@@ -27,8 +29,6 @@ if __name__ == "__main__":
     for group in elf_groups:
         if is_exclusively_cleaning_sections(group):
             total_exclusive_groups += 1
-
-    # import pdb;pdb.set_trace()
 
     print(f"The total number of exclusive elf groups is {total_exclusive_groups}")
     part1_ans = total_exclusive_groups

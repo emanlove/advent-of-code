@@ -1,6 +1,6 @@
 import sys
 
-NUM_STACKS = 9
+NUM_STACKS = 3
 
 def read_stacks_and_procedures(filename):
     with open(filename,'r') as fh:
@@ -64,10 +64,8 @@ def move_9001(stacks,count,frm,to):
     return stacks
 
 def top_of_stacks(stacks):
-    tops = ''
-    for indx in range(1,NUM_STACKS+1):
-        stack_top = stacks[indx].pop()
-        tops += stack_top
+    stack_tops = [s[-1] for s in stacks[1:]]
+    tops = ''.join(stack_tops)
     
     return tops
 

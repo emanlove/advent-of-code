@@ -53,6 +53,16 @@ def move(stacks,count,frm,to):
 
     return stacks
 
+def move_9001(stacks,count,frm,to):
+    temp = []
+    for _ in range(count):
+        crate = stacks[frm].pop()
+        temp.insert(0,crate)
+
+    stacks[to] += temp
+
+    return stacks
+
 def top_of_stacks(stacks):
     tops = ''
     for indx in range(1,NUM_STACKS+1):
@@ -70,7 +80,7 @@ if __name__ == "__main__":
     stacks = parse_stacks(s_data)
 
     for proc in procedures:
-        move(stacks,proc['move'],proc['from'],proc['to'])
+        move_9001(stacks,proc['move'],proc['from'],proc['to'])
 
     tops = top_of_stacks(stacks)
 

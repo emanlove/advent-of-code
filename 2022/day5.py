@@ -91,7 +91,7 @@ if __name__ == "__main__":
     print(f"The top of the stacks using CrateMover 9001 is {tops_9001}")
     part2_ans = tops_9001
 
-    if len(sys.argv) == 3:
+    if len(sys.argv) >= 3:
         if sys.argv[2] == part1_ans:
             print(f"Answer for part 1 is correct!")
     if len(sys.argv) == 4:

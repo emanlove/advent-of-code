@@ -1,5 +1,7 @@
 import sys
 
+NUM_STACKS = 9
+
 def read_stacks_and_procedures(filename):
     with open(filename,'r') as fh:
         s_and_p = [line.rstrip('\n') for line in fh]
@@ -32,36 +34,54 @@ def parse_stacks(lines):
     """ Based upon the input data of nine stacks this method will be highly specific to
         that data.
     """
-    STACK_INDXS = [1+(col*4) for col in range(0,9)]
+    STACK_INDXS = [1+(col*4) for col in range(NUM_STACKS)]
 
-    stacks = [[] for _ in range(10)]
+    stacks = [[] for _ in range(NUM_STACKS+1)]
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     for line in lines[-2::-1]:
         for stack,data_col in enumerate(STACK_INDXS):
-            if line[data_col] != '':
+            if line[data_col] != ' ':
                 stacks[stack+1].append(line[data_col])
 
     return stacks
+
+def move(stacks,count,frm,to):
+    for _ in range(count):
+        crate = stacks[frm].pop()
+        stacks[to].append(crate)
+
+    return stacks
+
+def top_of_stacks(stacks):
+    tops = ''
+    for indx in range(1,NUM_STACKS+1):
+        stack_top = stacks[indx].pop()
+        tops += stack_top
+    
+    return tops
 
 if __name__ == "__main__":
     file = sys.argv[1]
 
     stacks_and_procedures = read_stacks_and_procedures(file)
     s_data, p_data = extract_stacks_and_procedures(stacks_and_procedures)
-    p = parse_procedures(p_data)
-    s = parse_stacks(s_data)
-    # import pdb;pdb.set_trace()
+    procedures = parse_procedures(p_data)
+    stacks = parse_stacks(s_data)
 
-    # print(f"The total number of exclusive elf groups is {total_exclusive_groups}")
-    # part1_ans = total_exclusive_groups
-    part1_ans = 0
+    for proc in procedures:
+        move(stacks,proc['move'],proc['from'],proc['to'])
+
+    tops = top_of_stacks(stacks)
+
+    print(f"The top of the stacks is {tops}")
+    part1_ans = tops
 
     # print(f"The total sum of priorities for three elves in a group is {total_priorities_amongst_3_elves}")
     # part2_ans = total_priorities_amongst_3_elves
 
     if len(sys.argv) == 3:
-        if int(sys.argv[2]) == part1_ans:
+        if sys.argv[2] == part1_ans:
             print(f"Answer for part 1 is correct!")
     # if len(sys.argv) == 4:
     #     if int(sys.argv[3]) == part2_ans:

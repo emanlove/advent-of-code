@@ -28,10 +28,13 @@ def parse_procedures(lines):
 
     return procedures
 
-def parse_stacks(lines,num_stacks):
+def parse_stacks(lines):
     """ Based upon the input data of nine stacks this method will be highly specific to
         that data.
     """
+    stack_labels = lines[-1]
+    num_stacks = int([c for c in stack_labels if c !=' '][-1])
+
     STACK_INDXS = [1+(col*4) for col in range(num_stacks)]
 
     stacks = [[] for _ in range(num_stacks+1)]
@@ -69,12 +72,11 @@ def top_of_stacks(stacks):
 
 if __name__ == "__main__":
     file = sys.argv[1]
-    n_stacks = int(sys.argv[2])
 
     stacks_and_procedures = read_stacks_and_procedures(file)
     s_data, p_data = extract_stacks_and_procedures(stacks_and_procedures)
     procedures = parse_procedures(p_data)
-    stacks = parse_stacks(s_data,n_stacks)
+    stacks = parse_stacks(s_data)
     stacks_9001 = copy.deepcopy(stacks)
 
     for proc in procedures:
@@ -90,9 +92,9 @@ if __name__ == "__main__":
     print(f"The top of the stacks using CrateMover 9001 is {tops_9001}")
     part2_ans = tops_9001
 
-    if len(sys.argv) >= 4:
-        if sys.argv[3] == part1_ans:
+    if len(sys.argv) >= 3:
+        if sys.argv[2] == part1_ans:
             print(f"Answer for part 1 is correct!")
-    if len(sys.argv) == 5:
-        if sys.argv[4] == part2_ans:
+    if len(sys.argv) == 4:
+        if sys.argv[3] == part2_ans:
             print(f"Answer for part 2 is correct!")

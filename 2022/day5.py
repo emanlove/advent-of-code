@@ -1,4 +1,4 @@
-import sys
+import sys, copy
 
 NUM_STACKS = 3
 
@@ -76,21 +76,24 @@ if __name__ == "__main__":
     s_data, p_data = extract_stacks_and_procedures(stacks_and_procedures)
     procedures = parse_procedures(p_data)
     stacks = parse_stacks(s_data)
+    stacks_9001 = copy.deepcopy(stacks)
 
     for proc in procedures:
-        move_9001(stacks,proc['move'],proc['from'],proc['to'])
+        move(stacks,proc['move'],proc['from'],proc['to'])
+        move_9001(stacks_9001,proc['move'],proc['from'],proc['to'])
 
     tops = top_of_stacks(stacks)
+    tops_9001 = top_of_stacks(stacks_9001)
 
     print(f"The top of the stacks is {tops}")
     part1_ans = tops
 
-    # print(f"The total sum of priorities for three elves in a group is {total_priorities_amongst_3_elves}")
-    # part2_ans = total_priorities_amongst_3_elves
+    print(f"The top of the stacks using CrateMover 9001 is {tops_9001}")
+    part2_ans = tops_9001
 
     if len(sys.argv) == 3:
         if sys.argv[2] == part1_ans:
             print(f"Answer for part 1 is correct!")
-    # if len(sys.argv) == 4:
-    #     if int(sys.argv[3]) == part2_ans:
-    #         print(f"Answer for part 2 is correct!")
+    if len(sys.argv) == 4:
+        if sys.argv[3] == part2_ans:
+            print(f"Answer for part 2 is correct!")

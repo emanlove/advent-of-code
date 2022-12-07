@@ -12,12 +12,15 @@ def read_multiline(filename):
     with open(filename,'r') as fh:
         lines = [line.rstrip('\n') for line in fh]
 
+    # Hack to exit reading code
+    lines.append('$ EOF')
     return lines
 
 def build_filesystem(code):
     dirs = {}
     indx = 0
-    while indx < len(code)-1:
+    print(f"len of code {len(code)}")
+    while indx < len(code)-2:
         print(f"indx: {indx}")
     # for line in code:
         line = code[indx]
@@ -32,10 +35,13 @@ def build_filesystem(code):
             
             dirs[dir] = {'size':0}
             l_strtindx = indx+2
-            for l_indx,listing in enumerate(code[l_strtindx:]):
+            for l_indx,listing in enumerate(code[l_strtindx:len(code)+1]):
+                if listing == '':
+                    print("EOF")
+                
                 if listing.startswith('$'):
                     indx += (2 + l_indx)
-                    # import pdb; pdb.set_trace()
+                    #import pdb; pdb.set_trace()
                     break
                 elif listing.startswith('dir '):
                     _, dirname = listing.split('dir ')
@@ -43,9 +49,25 @@ def build_filesystem(code):
                         #import pdb; pdb.set_trace()
                         dirs[dir]['d'] = []
                     dirs[dir]['d'].append(dirname)
+                # elif listing[0] in '0123456789':
                 else:
                     filesize,filename = listing.split(' ')
                     dirs[dir]['size'] += int(filesize)
+                
+                #reached eof
+                if l_indx == len(code) + 1:
+                    print("l_indx is poast end of file")
+                    indx = len(code)
+                    break
+                # else:
+                #     # eof?
+                #     print(f"Debug: EOF?")
+                #     import pdb;pdb.set_trace()
+                #     indx += (2 + l_indx)
+                #     break
+            # eof?
+            # import pdb;pdb.set_trace()
+            # break
         else:
             # another cd line follows
             indx += 1
@@ -114,6 +136,7 @@ if __name__ == "__main__":
     #marker_size = int(sys.argv[2])
 
     terminal = read_multiline(file)
+    # import pdb;pdb.set_trace()
     directories = build_filesystem(terminal)
 
     import pdb; pdb.set_trace()

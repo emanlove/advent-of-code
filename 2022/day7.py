@@ -35,9 +35,9 @@ def build_filesystem(code):
             
             dirs[dir] = {'size':0}
             l_strtindx = indx+2
-            for l_indx,listing in enumerate(code[l_strtindx:len(code)+1]):
-                if listing == '':
-                    print("EOF")
+            for l_indx,listing in enumerate(code[l_strtindx:]):
+                # if listing == '':
+                #     print("EOF")
                 
                 if listing.startswith('$'):
                     indx += (2 + l_indx)
@@ -54,11 +54,11 @@ def build_filesystem(code):
                     filesize,filename = listing.split(' ')
                     dirs[dir]['size'] += int(filesize)
                 
-                #reached eof
-                if l_indx == len(code) + 1:
-                    print("l_indx is poast end of file")
-                    indx = len(code)
-                    break
+                # #reached eof
+                # if l_indx == len(code) + 1:
+                #     print("l_indx is poast end of file")
+                #     indx = len(code)
+                #     break
                 # else:
                 #     # eof?
                 #     print(f"Debug: EOF?")
@@ -73,12 +73,44 @@ def build_filesystem(code):
             indx += 1
     return dirs
 
-# def build_filesystem(code):
-#     fs = {'/':{'parent':None,'files':{},'directories':{},'size':{}}
-#     for line in code:
-#         if line.startswith("$ "):
-#             prompt,cmd,*dir 
-#             if 
+def build_nav_filesystem(code):
+    fs = {'/': {'parent':None,'files':[],'directories':[],'size':None,} }
+    pwd = None
+    for indx,line in enumerate(code):
+        if line.startswith("$ "):
+            prompt,cmd,*dir_listing = line.split(' ')
+            if cmd == 'cd':
+                # verify dir to change to
+                if len(dir_listing) != 1:
+                    raise ValueError(f"cd command has no directory! [{indx}]")
+                dir = dir_listing[0]
+                if dir == '..':
+                    pwd = fs[pwd]['parent']
+                else:
+                    if dir not in fs:
+                        fs[dir] = {'parent':pwd,'files':[],'directories':[],'size':None,}
+                    pwd = dir
+            elif cmd == 'ls':
+                continue
+                # use for loop to continue through
+            elif cmd == "EOF":
+                # Note in a FOR loop controlled parser we shouldn't have to add EOF and that code can be removed
+                return fs
+            else:
+                print(f"Warning: Unknown Command - {cmd}")
+        else:
+            # a listing line
+            # couple ways of parsing this . I am going based on dir line or not. Could just parse on space but can't figure out a good
+            #  variable name for either_dir_listing_or_filesize (terrible var name ;) )
+            if line.startswith('dir '):
+                _, dir_name = line.split('dir ')
+                fs[pwd]['directories'].append(dir_name)
+            else:
+                #should be file listing
+                filesize, filename = line.split(' ')
+                fs[pwd]['files'].append( (filesize,filename) )
+    
+    return fs
 
 def find_start_of_packet_marker(ds,size):
     """
@@ -131,15 +163,37 @@ def find_start_of_packet_marker(ds,size):
         if len(set(ds[indx:indx+size])) == size:
             return indx+size   # noting Python is zero based but answer will be one based
 
+# def calculate_dir_size(dir):
+#     for sub_dir in dir['directories']:
+
+def get_dir_size(fs, dir):
+    if fs[dir]['size'] is not None:
+        return fs[dir]['size']
+    dir_size = 0
+    for sub_dir in dir['directories']:
+        dir_size += get_dir_size(fs,sub_dir)
+    
+    for file in fs[dir]['files']:
+        dir_size += file(0)
+    
+    fs[dir]['size'] = dir_size
+
+    return something # knowing I need to return both dir_size but also fs as I modify it ..
+
+# def do_something(fs):
+#     for dir in fs:
+#         for sub_dir in 
+
 if __name__ == "__main__":
     file = sys.argv[1]
     #marker_size = int(sys.argv[2])
 
     terminal = read_multiline(file)
     # import pdb;pdb.set_trace()
-    directories = build_filesystem(terminal)
+    directories = build_nav_filesystem(terminal)
 
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
+    print(f"{directories}")
 
     # total = 0
     # for line in datastream:

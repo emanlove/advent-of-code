@@ -69,6 +69,22 @@ def build_filesystem(code):
             indx += 1
     return dirs
 
+def is_traversed_path(path):
+    """
+    Returns True if path is a tranversed path. Otherwise, it is a relative path and
+    returns false.
+    """
+    return '..' in path
+
+def make_path_relative(path):
+    dirs = path.split('/')
+    for indx,dir in enumerate(dirs):
+        if dir == '..':
+            dirs.pop(indx)
+            dirs.pop(indx-1)
+    
+    return dirs
+
 def build_nav_filesystem(code):
     fs = {'/': {'parent':None,'files':[],'directories':[],'size':None,} }
     pwd = None
@@ -145,6 +161,10 @@ if __name__ == "__main__":
     file = sys.argv[1]
     #marker_size = int(sys.argv[2])
 
+    t = '//a/e/../../d'
+    r = make_path_relative(t)
+    print(f"traversed  {t}\nrelative  {r}")
+    
     terminal = read_multiline(file)
     # import pdb;pdb.set_trace()
     directories = build_nav_filesystem(terminal)

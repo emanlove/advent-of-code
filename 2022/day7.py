@@ -1,5 +1,9 @@
 import sys
 
+# class Directory:
+#     def __init__(self,)
+
+
 def read_multiline(filename):
     with open(filename,'r') as fh:
         lines = [line.rstrip('\n') for line in fh]
@@ -68,6 +72,7 @@ def build_filesystem(code):
 def build_nav_filesystem(code):
     fs = {'/': {'parent':None,'files':[],'directories':[],'size':None,} }
     pwd = None
+    pwp = []
     for indx,line in enumerate(code):
         if line.startswith("$ "):
             prompt,cmd,*dir_listing = line.split(' ')
@@ -75,13 +80,17 @@ def build_nav_filesystem(code):
                 # verify dir to change to
                 if len(dir_listing) != 1:
                     raise ValueError(f"cd command has no directory! [{indx}]")
-                dir = dir_listing[0]
-                if dir == '..':
-                    pwd = fs[pwd]['parent']
-                else:
-                    if dir not in fs:
-                        fs[dir] = {'parent':pwd,'files':[],'directories':[],'size':None,}
-                    pwd = dir
+                dir = dir_listing[0]            
+                pwp.append(dir)
+                traversed_path = '/'.join(pwp[1:])
+                # don't think I need to save directories but going to start to do so .. just to see what I see
+                fs[traversed_path] = {'files':[],'directories':[],'size':None,}
+                # if dir == '..':
+                #     pwd = fs[pwd]['parent']
+                # else:
+                #     if dir not in fs:
+                #         fs[dir] = {'parent':pwd,'files':[],'directories':[],'size':None,}
+                #     pwd = dir
             elif cmd == 'ls':
                 continue
                 # use for loop to continue through
@@ -94,14 +103,17 @@ def build_nav_filesystem(code):
             # a listing line
             # couple ways of parsing this . I am going based on dir line or not. Could just parse on space but can't figure out a good
             #  variable name for either_dir_listing_or_filesize (terrible var name ;) )
+            traversed_path = '/'.join(pwp[1:])
             if line.startswith('dir '):
                 _, dir_name = line.split('dir ')
-                fs[pwd]['directories'].append(dir_name)
+                # fs[pwd]['directories'].append(dir_name)
+                fs[traversed_path]['directories'].append(dir_name)
             else:
                 #should be file listing
                 filesize, filename = line.split(' ')
-                fs[pwd]['files'].append( (filesize,filename) )
-    
+                # fs[pwd]['files'].append( (filesize,filename) )
+                fs[traversed_path]['files'].append( (filesize,filename) )
+
     return fs
 
 # def calculate_dir_size(dir):

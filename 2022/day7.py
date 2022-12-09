@@ -145,6 +145,14 @@ def build_nav_filesystem(code):
 # def calculate_dir_size(dir):
 #     for sub_dir in dir['directories']:
 
+def resolve_all_traversed_paths(fs):
+    for dirname in fs.keys():
+        if is_traversed_path(dirname):
+            rel_dirname = make_path_relative(dirname)
+            fs[rel_dirname] = fs.pop(dirname)
+        
+    return fs
+
 def get_dir_size(fs, dir):
     if fs[dir]['size'] is not None:
         return fs[dir]['size']
@@ -181,6 +189,9 @@ if __name__ == "__main__":
 
     # import pdb; pdb.set_trace()
     print(f"{directories}")
+
+    new_filesystem = resolve_all_traversed_paths(directories)
+    print(f"{new_filesystem}")
 
     # total = 0
     # for line in datastream:

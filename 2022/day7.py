@@ -62,6 +62,7 @@ def build_filesystem_by_traversing(code):
                 # use for loop to continue through
             elif cmd == "EOF":
                 # Note in a FOR loop controlled parser we shouldn't have to add EOF and that code can be removed
+                print(f"Debug: Found EOF cmd!")
                 return fs
             else:
                 print(f"Warning: Unknown Command - {cmd}")
@@ -81,7 +82,7 @@ def build_filesystem_by_traversing(code):
                 #should be file listing
                 filesize, filename = line.split(' ')
                 # fs[pwd]['files'].append( (filesize,filename) )
-                fs[relative_path]['files'].append( (filesize,filename) )
+                fs[relative_path]['files'].append( (int(filesize),filename) )
 
     return fs
 
@@ -92,6 +93,12 @@ def resolve_all_traversed_paths(fs):
             fs[rel_dirname] = fs.pop(dirname)
         
     return fs
+
+def calculate_filesystem_size(fs):
+    for dir in fs:
+        if (fs[dir]['directories'] == []) and (fs[dir]['size'] is None):
+            fs[dir]['size'] = sum([f[0] for f in fs[dir]['files']])
+
 
 def get_dir_size(fs, dir):
     if fs[dir]['size'] is not None:
@@ -122,6 +129,8 @@ if __name__ == "__main__":
 
     filesystem = build_filesystem_by_traversing(terminal)
     print(f"{filesystem}")
+
+    calculate_filesystem_size(filesystem)
 
     # print(f"The total is {total}")
     # part1_ans = total

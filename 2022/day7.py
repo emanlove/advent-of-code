@@ -100,20 +100,6 @@ def calculate_filesystem_size(fs):
             fs[dir]['size'] = sum([f[0] for f in fs[dir]['files']])
 
 
-def get_dir_size(fs, dir):
-    if fs[dir]['size'] is not None:
-        return fs[dir]['size']
-    dir_size = 0
-    for sub_dir in dir['directories']:
-        dir_size += get_dir_size(fs,sub_dir)
-    
-    for file in fs[dir]['files']:
-        dir_size += file(0)
-    
-    fs[dir]['size'] = dir_size
-
-    return something # knowing I need to return both dir_size but also fs as I modify it ..
-
 if __name__ == "__main__":
     file = sys.argv[1]
 

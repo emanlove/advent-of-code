@@ -1,9 +1,5 @@
 import sys
 
-# class Directory:
-#     def __init__(self,)
-
-
 def read_multiline(filename):
     with open(filename,'r') as fh:
         lines = [line.rstrip('\n') for line in fh]
@@ -11,63 +7,6 @@ def read_multiline(filename):
     # Hack to exit reading code
     lines.append('$ EOF')
     return lines
-
-def build_filesystem(code):
-    dirs = {}
-    indx = 0
-    print(f"len of code {len(code)}")
-    while indx < len(code)-2:
-        print(f"indx: {indx}")
-    # for line in code:
-        line = code[indx]
-        if line.startswith('$ cd ') and not line.endswith('..') and code[indx+1]=='$ ls':
-            # start of directory listing
-            _,dir = line.split('$ cd ')
-
-            # warn if we already know this dir
-            if dir in dirs:
-                print(f'Warning: Found listing for {dir} again!')
-                break
-            
-            dirs[dir] = {'size':0}
-            l_strtindx = indx+2
-            for l_indx,listing in enumerate(code[l_strtindx:]):
-                # if listing == '':
-                #     print("EOF")
-                
-                if listing.startswith('$'):
-                    indx += (2 + l_indx)
-                    #import pdb; pdb.set_trace()
-                    break
-                elif listing.startswith('dir '):
-                    _, dirname = listing.split('dir ')
-                    if 'd' not in dirs[dir]:
-                        #import pdb; pdb.set_trace()
-                        dirs[dir]['d'] = []
-                    dirs[dir]['d'].append(dirname)
-                # elif listing[0] in '0123456789':
-                else:
-                    filesize,filename = listing.split(' ')
-                    dirs[dir]['size'] += int(filesize)
-                
-                # #reached eof
-                # if l_indx == len(code) + 1:
-                #     print("l_indx is poast end of file")
-                #     indx = len(code)
-                #     break
-                # else:
-                #     # eof?
-                #     print(f"Debug: EOF?")
-                #     import pdb;pdb.set_trace()
-                #     indx += (2 + l_indx)
-                #     break
-            # eof?
-            # import pdb;pdb.set_trace()
-            # break
-        else:
-            # another cd line follows
-            indx += 1
-    return dirs
 
 def is_traversed_path(path):
     """
@@ -146,9 +85,6 @@ def build_filesystem_by_traversing(code):
 
     return fs
 
-# def calculate_dir_size(dir):
-#     for sub_dir in dir['directories']:
-
 def resolve_all_traversed_paths(fs):
     for dirname in fs.keys():
         if is_traversed_path(dirname):
@@ -171,13 +107,8 @@ def get_dir_size(fs, dir):
 
     return something # knowing I need to return both dir_size but also fs as I modify it ..
 
-# def do_something(fs):
-#     for dir in fs:
-#         for sub_dir in 
-
 if __name__ == "__main__":
     file = sys.argv[1]
-    #marker_size = int(sys.argv[2])
 
     t = '//a/e/../../d'
     r = make_path_relative(t)
@@ -188,21 +119,9 @@ if __name__ == "__main__":
     print(f"traversed  {t2}\nrelative   {r2}")
 
     terminal = read_multiline(file)
-    # import pdb;pdb.set_trace()
+
     filesystem = build_filesystem_by_traversing(terminal)
-
-    # import pdb; pdb.set_trace()
     print(f"{filesystem}")
-
-    # new_filesystem = resolve_all_traversed_paths(filesystem)
-    # print(f"{new_filesystem}")
-
-    # total = 0
-    # for line in datastream:
-    #     if line[0] in '0123456789':
-    #         size, *_ = line.split(' ')
-    #         total += int(size)
-    # pos_marker = find_start_of_packet_marker(datastream, marker_size)
 
     # print(f"The total is {total}")
     # part1_ans = total

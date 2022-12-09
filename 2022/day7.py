@@ -108,10 +108,15 @@ def calculate_filesystem_size(fs):
     # any([True if fs[d]['directories'] else False for d in fs ])
     while any([True if fs[d]['directories'] else False for d in fs ]):        
         for dir in fs:
+            remove_these = []
             for indx,subdir in enumerate(fs[dir]['directories']):
                 if not fs[subdir]['directories']:
                     fs[dir]['size'] += fs[subdir]['size']
-                    fs[dir]['directories'].pop(indx)  # !!!! This is going to have an issue with manipulating the list while looping through it
+                    remove_these.append(subdir)
+            for remove in remove_these:
+                remove_indx = fs[dir]['directories'].index(remove)
+                fs[dir]['directories'].pop(remove_indx)
+
     return fs
 
 if __name__ == "__main__":

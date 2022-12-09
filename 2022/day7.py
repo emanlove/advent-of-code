@@ -91,7 +91,7 @@ def make_path_relative(path):
 
     return '/'.join(dirs)
 
-def build_nav_filesystem(code):
+def build_filesystem_by_traversing(code):
     fs = {'/': {'parent':None,'files':[],'directories':[],'size':None,} }
     pwd = None
     pwp = []
@@ -110,7 +110,8 @@ def build_nav_filesystem(code):
                 # but for now will will do this ..
                 # .. still worried about that inital '/' and then '' directory which is the root ..
                 if dir != '..':
-                    fs[traversed_path] = {'files':[],'directories':[],'size':None,}
+                    relative_path = make_path_relative(traversed_path)
+                    fs[relative_path] = {'files':[],'directories':[],'size':None,}
                 # if dir == '..':
                 #     pwd = fs[pwd]['parent']
                 # else:
@@ -130,15 +131,18 @@ def build_nav_filesystem(code):
             # couple ways of parsing this . I am going based on dir line or not. Could just parse on space but can't figure out a good
             #  variable name for either_dir_listing_or_filesize (terrible var name ;) )
             traversed_path = '/'.join(pwp)
+            relative_path = make_path_relative(traversed_path)
             if line.startswith('dir '):
                 _, dir_name = line.split('dir ')
                 # fs[pwd]['directories'].append(dir_name)
-                fs[traversed_path]['directories'].append(traversed_path + '/' + dir_name)
+                traversed_subdir = traversed_path + '/' + dir_name
+                relative_subdir = make_path_relative(traversed_subdir)
+                fs[relative_path]['directories'].append(relative_subdir)
             else:
                 #should be file listing
                 filesize, filename = line.split(' ')
                 # fs[pwd]['files'].append( (filesize,filename) )
-                fs[traversed_path]['files'].append( (filesize,filename) )
+                fs[relative_path]['files'].append( (filesize,filename) )
 
     return fs
 
@@ -185,13 +189,13 @@ if __name__ == "__main__":
 
     terminal = read_multiline(file)
     # import pdb;pdb.set_trace()
-    directories = build_nav_filesystem(terminal)
+    filesystem = build_filesystem_by_traversing(terminal)
 
     # import pdb; pdb.set_trace()
-    print(f"{directories}")
+    print(f"{filesystem}")
 
-    new_filesystem = resolve_all_traversed_paths(directories)
-    print(f"{new_filesystem}")
+    # new_filesystem = resolve_all_traversed_paths(filesystem)
+    # print(f"{new_filesystem}")
 
     # total = 0
     # for line in datastream:

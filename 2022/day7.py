@@ -135,7 +135,7 @@ if __name__ == "__main__":
     filesystem = build_filesystem_by_traversing(terminal)
 
     calculated_fs = calculate_filesystem_size(filesystem)
-    print(f"{calculated_fs}")
+    # print(f"{calculated_fs}")
 
     # claculate the answer for part 1
     # sum all directories whose toal size is at most (less than or equal to) 100,000
@@ -146,6 +146,23 @@ if __name__ == "__main__":
     print(f"The total is {total}")
     part1_ans = total
 
+    TOTAL_DISK_SPACE = 70000000
+    SIZE_NEEDED_FOR_UPDATE = 30000000
+
+    total_used = calculated_fs['/']['size']
+    total_unused = TOTAL_DISK_SPACE - total_used
+
+    space_required = SIZE_NEEDED_FOR_UPDATE - total_unused
+    dirs_with_sufficient_space = [(calculated_fs[dir]['size'],dir) for dir in calculated_fs if calculated_fs[dir]['size'] >= space_required]
+    min_dir_size = min([dir[0] for dir in dirs_with_sufficient_space])
+
+    print(f"The directory size which will be sufficient enough is {min_dir_size}")
+    part2_ans = min_dir_size
+
     if len(sys.argv) >= 3:
         if int(sys.argv[2]) == part1_ans:
-            print(f"Answer is correct!")
+            print(f"Answer for part 1 is correct!")
+    if len(sys.argv) == 4:
+        if int(sys.argv[3]) == part2_ans:
+            print(f"Answer for part 2 is correct!")
+

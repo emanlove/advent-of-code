@@ -82,9 +82,13 @@ def build_nav_filesystem(code):
                     raise ValueError(f"cd command has no directory! [{indx}]")
                 dir = dir_listing[0]            
                 pwp.append(dir)
-                traversed_path = '/'.join(pwp[1:])
+                traversed_path = '/'.join(pwp)
                 # don't think I need to save directories but going to start to do so .. just to see what I see
-                fs[traversed_path] = {'files':[],'directories':[],'size':None,}
+                # only want to save when not changing directory to parent,or really when the next command is ls,
+                # but for now will will do this ..
+                # .. still worried about that inital '/' and then '' directory which is the root ..
+                if dir != '..':
+                    fs[traversed_path] = {'files':[],'directories':[],'size':None,}
                 # if dir == '..':
                 #     pwd = fs[pwd]['parent']
                 # else:
@@ -103,7 +107,7 @@ def build_nav_filesystem(code):
             # a listing line
             # couple ways of parsing this . I am going based on dir line or not. Could just parse on space but can't figure out a good
             #  variable name for either_dir_listing_or_filesize (terrible var name ;) )
-            traversed_path = '/'.join(pwp[1:])
+            traversed_path = '/'.join(pwp)
             if line.startswith('dir '):
                 _, dir_name = line.split('dir ')
                 # fs[pwd]['directories'].append(dir_name)

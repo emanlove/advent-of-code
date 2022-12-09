@@ -111,7 +111,7 @@ def build_nav_filesystem(code):
             if line.startswith('dir '):
                 _, dir_name = line.split('dir ')
                 # fs[pwd]['directories'].append(dir_name)
-                fs[traversed_path]['directories'].append(dir_name)
+                fs[traversed_path]['directories'].append(traversed_path + '/' + dir_name)
             else:
                 #should be file listing
                 filesize, filename = line.split(' ')

@@ -137,9 +137,15 @@ if __name__ == "__main__":
     calculated_fs = calculate_filesystem_size(filesystem)
     print(f"{calculated_fs}")
 
-    # print(f"The total is {total}")
-    # part1_ans = total
+    # claculate the answer for part 1
+    # sum all directories whose toal size is at most (less than or equal to) 100,000
+    total = 0
+    for directory in calculated_fs:
+        if calculated_fs[directory]['size'] <= 100000:
+            total += calculated_fs[directory]['size']
+    print(f"The total is {total}")
+    part1_ans = total
 
-    # if len(sys.argv) >= 3:
-    #     if int(sys.argv[2]) == part1_ans:
-    #         print(f"Answer is correct!")
+    if len(sys.argv) >= 3:
+        if int(sys.argv[2]) == part1_ans:
+            print(f"Answer is correct!")

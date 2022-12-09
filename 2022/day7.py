@@ -78,12 +78,13 @@ def is_traversed_path(path):
 
 def make_path_relative(path):
     dirs = path.split('/')
-    for indx,dir in enumerate(dirs):
-        if dir == '..':
-            dirs.pop(indx)
-            dirs.pop(indx-1)
+    while is_traversed_path(dirs):
+        for indx,dir in enumerate(dirs):
+            if dir == '..':
+                dirs.pop(indx)
+                dirs.pop(indx-1)
     
-    return dirs
+    return '/'.join(dirs)
 
 def build_nav_filesystem(code):
     fs = {'/': {'parent':None,'files':[],'directories':[],'size':None,} }
@@ -163,8 +164,12 @@ if __name__ == "__main__":
 
     t = '//a/e/../../d'
     r = make_path_relative(t)
-    print(f"traversed  {t}\nrelative  {r}")
-    
+    print(f"traversed  {t}\nrelative   {r}")
+
+    t2 = '//a/b/c/d/e/../../../../../f'
+    r2 = make_path_relative(t)
+    print(f"traversed  {t2}\nrelative   {r2}")
+
     terminal = read_multiline(file)
     # import pdb;pdb.set_trace()
     directories = build_nav_filesystem(terminal)

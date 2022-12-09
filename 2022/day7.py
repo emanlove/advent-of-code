@@ -95,10 +95,24 @@ def resolve_all_traversed_paths(fs):
     return fs
 
 def calculate_filesystem_size(fs):
+    # sum up file size for all directories
     for dir in fs:
-        if (fs[dir]['directories'] == []) and (fs[dir]['size'] is None):
-            fs[dir]['size'] = sum([f[0] for f in fs[dir]['files']])
+        fs[dir]['size'] = sum([f[0] for f in fs[dir]['files']])
 
+    # while any directories still have sub directories listed,
+    # loop through adding in those directories that no longer
+    # have any direcories listed and then remove that directory
+    # from the subdirectories list
+    #
+    # Expect this to be a non optimal process
+    # any([True if fs[d]['directories'] else False for d in fs ])
+    while any([True if fs[d]['directories'] else False for d in fs ]):        
+        for dir in fs:
+            for indx,subdir in enumerate(fs[dir]['directories']):
+                if not fs[subdir]['directories']:
+                    fs[dir]['size'] += fs[subdir]['size']
+                    fs[dir]['directories'].pop(indx)  # !!!! This is going to have an issue with manipulating the list while looping through it
+    return fs
 
 if __name__ == "__main__":
     file = sys.argv[1]
@@ -114,9 +128,9 @@ if __name__ == "__main__":
     terminal = read_multiline(file)
 
     filesystem = build_filesystem_by_traversing(terminal)
-    print(f"{filesystem}")
 
-    calculate_filesystem_size(filesystem)
+    calculated_fs = calculate_filesystem_size(filesystem)
+    print(f"{calculated_fs}")
 
     # print(f"The total is {total}")
     # part1_ans = total

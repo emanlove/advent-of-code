@@ -32,7 +32,6 @@ def combine_lr_with_ud(lr,ud):
         for c in range(len(ud[0])):
             ud_serialized[r+(c*len(ud))] = ud[r][c]
     
-    lrud = [vis or ud_serialized[indx] for indx,vis in enumerate(lr_serialized)]
     lrud = list(zip(lr_serialized,ud_serialized))
 
     return lrud
@@ -42,15 +41,6 @@ def combine_visibility(lr,ud):
     visibility = [pair[0] or pair[1] for pair in lrud]
 
     return visibility
-    # lr_serialized = [t for r in lr for t in r]
-    # ud_serialized = [None for _ in range(len(ud)*len(ud[0]))]
-    # for r in range(len(ud)):
-    #     for c in range(len(ud[0])):
-    #         ud_serialized[r+(c*len(ud))] = ud[r][c]
-    
-    # lrud = [vis or ud_serialized[indx] for indx,vis in enumerate(lr_serialized)]
-
-    # return lrud
 
 def find_row_wise_visibility(trees):
     tree_vis = default_visibility(len(trees),len(trees[0]))
@@ -105,7 +95,6 @@ if __name__ == "__main__":
     flipped = translated_forest(trees)
     ud_visibility = find_row_wise_visibility(flipped)
 
-    # tree_visibility = combine_lr_with_ud(lr_visibility, ud_visibility)
     tree_visibility = combine_visibility(lr_visibility, ud_visibility)
 
     total_trees_visible = sum([1 if vis else 0 for vis in tree_visibility])

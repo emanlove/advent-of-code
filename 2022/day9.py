@@ -39,6 +39,7 @@ def move_as_head_moves(h,t):
     change_in_X = h[0]-t[0]
     change_in_Y = h[1]-t[1]
 
+    print(f"{change_in_X} {change_in_Y}")
     MOVE = [
         [ (-1, 1) , (-1, 1) , (0, 1) , (1, 1) , (1, 1) ],
         [ (-1, 1) , ( 0, 0) , (0, 0) , (0, 0) , (1, 1) ],
@@ -63,23 +64,26 @@ def tail_follows_along(heads_path):
 
     return tail_visited
 
-def build_breadcrumbs(movements):
-    tail_visited = [(0,0)]
+def knots_follow_along(heads_path, num_knots):
+    rope_visited = [heads_path] + [[(0,0)] for _ in range(num_knots)]
+    for head_pos in rope_visited[0][1:]:
+        # import pdb;pdb.set_trace()
+        for this,knot in enumerate(rope_visited[1:]):
+            this_last_pos = knot[-1]
+            # rope_visited[this][-1] is incorrect the [-1] does not work for head
+            # should be related to indx of head_pos
+            change = move_as_head_moves(rope_visited[this][-1],this_last_pos)
+            rope_visited[this+1].append(take_step(this_last_pos,change))
 
-    for move in movements:
-        dir,steps = move.split(' ')
-
-        # movement of tail dependent on both movement, as well as starting relative position
+    return rope_visited
 
 def display_spots_visited(path):
     X = [p[0] for p in path]; Y = [p[1] for p in path]
     minX = min(X); maxX = max(X); minY = min(Y); maxY = max(Y)
     nCols = abs(maxX - minX) + 1; nRows = abs(maxY-minY) + 1
-    # default_grid = ['.' * nCols for _ in range(nRows)]
     default_grid = [['.' for _ in range(nCols)] for _ in range(nRows)]
     offsetY = [_ for _ in range(maxY,minY-1,-1)]  # grid row diff from display row
 
-    # import pdb;pdb.set_trace()
     for pos in path:
         # print(f"{pos[0]} {offsetY[pos[1]]}")
         default_grid[offsetY[pos[1]]][pos[0]] = '#'
@@ -103,9 +107,12 @@ if __name__ == "__main__":
     print(f"The total number of unique positions the tail visited is {num_unique_pos_tail_visited}")
     part1_ans = num_unique_pos_tail_visited
 
-    # import pdb;pdb.set_trace()
-    # print(f"The highest tree score is {max_tree_score}")
-    # part2_ans = 0
+    ropes_path = knots_follow_along(heads_path, 9)
+    num_unique_pos_last_knot_visited = len(set(ropes_path[-1]))
+    print(f"The total number of unique positions the last knot visited is {num_unique_pos_last_knot_visited}")
+    part2_ans = num_unique_pos_last_knot_visited
+
+    import pdb; pdb.set_trace()
 
     if len(sys.argv) >= 3:
         if int(sys.argv[2]) == part1_ans:

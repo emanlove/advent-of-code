@@ -39,7 +39,7 @@ def move_as_head_moves(h,t):
     change_in_X = h[0]-t[0]
     change_in_Y = h[1]-t[1]
 
-    print(f"{change_in_X} {change_in_Y}")
+    # print(f"{change_in_X} {change_in_Y}")
     MOVE = [
         [ (-1, 1) , (-1, 1) , (0, 1) , (1, 1) , (1, 1) ],
         [ (-1, 1) , ( 0, 0) , (0, 0) , (0, 0) , (1, 1) ],
@@ -66,13 +66,13 @@ def tail_follows_along(heads_path):
 
 def knots_follow_along(heads_path, num_knots):
     rope_visited = [heads_path] + [[(0,0)] for _ in range(num_knots)]
-    for head_pos in rope_visited[0][1:]:
+    for head_indx,head_pos in enumerate(rope_visited[0][1:]):
         # import pdb;pdb.set_trace()
         for this,knot in enumerate(rope_visited[1:]):
             this_last_pos = knot[-1]
             # rope_visited[this][-1] is incorrect the [-1] does not work for head
             # should be related to indx of head_pos
-            change = move_as_head_moves(rope_visited[this][-1],this_last_pos)
+            change = move_as_head_moves(rope_visited[this][head_indx+1],this_last_pos)
             rope_visited[this+1].append(take_step(this_last_pos,change))
 
     return rope_visited
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     print(f"The total number of unique positions the last knot visited is {num_unique_pos_last_knot_visited}")
     part2_ans = num_unique_pos_last_knot_visited
 
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
 
     if len(sys.argv) >= 3:
         if int(sys.argv[2]) == part1_ans:

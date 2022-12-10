@@ -35,22 +35,23 @@ def build_heads_path(movements):
 
     return head_visited
 
-def get_relative_dir_dist(h,t):
-    dir = (h[0]-t[0],h[1]-t[1])
-    # dist = abs(dir[0]) + abs(dir[1])
-    too_far = (abs(dir[0]) > 1) or (abs(dir[1]) > 1)
+def move_as_head_moves(h,t):
+    change_in_X = h[0]-t[0]
+    change_in_Y = h[1]-t[1]
+    move_x = 1 if change_in_X > 1 else -1 if change_in_X < -1 else 0
+    move_y = 1 if change_in_Y > 1 else -1 if change_in_Y < -1 else 0
 
-    return dir,too_far
+    # tail_change_by = (1 if change_in_X > 1 else 0, 1 if change_in_Y > 1 else 0)
+    return (move_x, move_y)
 
 def tail_follows_along(heads_path):
     tail_visited = [(0,0)]
 
-    for head_pos in heads_path:
+    for head_pos in heads_path[1:]:
         last_tail_pos = tail_visited[-1]
         # head - tail = gives both distance away but also direction tail needs to go
-        rel_dir, too_far = get_relative_dir_dist(head_pos,last_tail_pos)
-        if too_far:
-            tail_visited.append(take_step(last_tail_pos,rel_dir))
+        change = move_as_head_moves(head_pos,last_tail_pos)
+        tail_visited.append(take_step(last_tail_pos,change))
 
     return tail_visited
 
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     heads_path = build_heads_path(moves)
     tails_path = tail_follows_along(heads_path)
 
-    display_spots_visited(tails_path)
+    # display_spots_visited(tails_path)
 
     num_unique_pos_tail_visited = len(set(tails_path))
     print(f"The total number of unique positions the tail visited is {num_unique_pos_tail_visited}")

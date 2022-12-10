@@ -35,14 +35,22 @@ def build_heads_path(movements):
 
     return head_visited
 
-def move_as_head_moves(h,t):
+def move_as_head_moves(h,t):    
     change_in_X = h[0]-t[0]
     change_in_Y = h[1]-t[1]
-    move_x = 1 if change_in_X > 1 else -1 if change_in_X < -1 else 0
-    move_y = 1 if change_in_Y > 1 else -1 if change_in_Y < -1 else 0
 
+    MOVE = [
+        [ (-1, 1) , (-1, 1) , (0, 1) , (1, 1) , (1, 1) ],
+        [ (-1, 1) , ( 0, 0) , (0, 0) , (0, 0) , (1, 1) ],
+        [ (-1, 0) , ( 0, 0) , (0, 0) , (0, 0) , (1, 0) ],
+        [ (-1,-1) , ( 0, 0) , (0, 0) , (0, 0) , (1,-1) ],
+        [ (-1,-1) , (-1,-1) , (0,-1) , (1,-1) , (1,-1) ],
+    ]
+    # move_x = 1 if change_in_X > 1 else -1 if change_in_X < -1 else 0
+    # move_y = 1 if change_in_Y > 1 else -1 if change_in_Y < -1 else 0
+    Yrow = list(range(4,-1,-1))
     # tail_change_by = (1 if change_in_X > 1 else 0, 1 if change_in_Y > 1 else 0)
-    return (move_x, move_y)
+    return MOVE[Yrow[change_in_Y+2]][change_in_X+2]
 
 def tail_follows_along(heads_path):
     tail_visited = [(0,0)]
@@ -69,15 +77,15 @@ def display_spots_visited(path):
     nCols = abs(maxX - minX) + 1; nRows = abs(maxY-minY) + 1
     # default_grid = ['.' * nCols for _ in range(nRows)]
     default_grid = [['.' for _ in range(nCols)] for _ in range(nRows)]
-    offsetX = [4, 3, 2, 1, 0]  # grid row diff from display row
+    offsetY = [_ for _ in range(maxY,minY-1,-1)]  # grid row diff from display row
 
+    # import pdb;pdb.set_trace()
     for pos in path:
-        # import pdb;pdb.set_trace()
-        # print(f"{offsetX[pos[0]]} {pos[1]}")
-        default_grid[offsetX[pos[0]]][pos[1]] = '#'
+        # print(f"{pos[0]} {offsetY[pos[1]]}")
+        default_grid[offsetY[pos[1]]][pos[0]] = '#'
     
     #display start
-    default_grid[offsetX[0]][0] = 's'
+    default_grid[offsetY[0]][0] = 's'
 
     pp = pprint.PrettyPrinter()
     pp.pprint(default_grid)
@@ -95,6 +103,7 @@ if __name__ == "__main__":
     print(f"The total number of unique positions the tail visited is {num_unique_pos_tail_visited}")
     part1_ans = num_unique_pos_tail_visited
 
+    # import pdb;pdb.set_trace()
     # print(f"The highest tree score is {max_tree_score}")
     # part2_ans = 0
 

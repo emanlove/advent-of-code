@@ -17,7 +17,7 @@ def parse_notes(notes):
         # Extract worry levels
         worry_levelSTR = note[1].split('  Starting items: ')[1].split(', ')
         worry_level = [int(_) for _ in worry_levelSTR]
-        print(f"{worry_level}")
+        # print(f"{worry_level}")
         # Extract Operation
         oper = note[2].split('  Operation: new = ')[1]
         operand,operator,modifier = oper.split(' ')
@@ -26,12 +26,12 @@ def parse_notes(notes):
         test = int(note[3].split('  Test: divisible by ')[1])
         if_true = int(note[4].split('    If true: throw to monkey ')[1])
         if_false = int(note[5].split('    If false: throw to monkey ')[1])
-        print(f"{if_true}  {if_false}")
+        # print(f"{if_true}  {if_false}")
 
         attr = {'worry_levels':worry_level, 'operation':operation, 'test':test, 'if_true':if_true, 'if_false':if_false, 'activity':0}
         monkeys.append(attr)
     
-    print(f"{len(monkeys)}")
+    # print(f"{len(monkeys)}")
     return monkeys
 
 def inspect_item(level,oper):
@@ -80,12 +80,19 @@ def play_keep_away(monkeys):
                     monkeys[monkey['if_false']]['worry_levels'].append(relief_level)
             monkey['activity'] += len(monkey['worry_levels'])
             monkey['worry_levels'] = []
+        display_items_held(round,monkeys)
 
     return monkeys
 
 def display_monkey_total_activity(monkeys):
     for indx,monkey in enumerate(monkeys):
         print(f"Monkey {indx} inspected items {monkey['activity']} times.")
+
+def display_items_held(round,monkeys):
+    print("")
+    print(f"After round {round+1}, the monkeys are holding items with these worry levels:")
+    for indx,monkey in enumerate(monkeys):
+        print(f"Monkey {indx}: {monkey['worry_levels']}")
 
 if __name__ == "__main__":
     file = sys.argv[1]

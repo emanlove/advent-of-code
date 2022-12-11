@@ -1,6 +1,6 @@
 import sys
 
-TOTAL_NUM_ROUNDS = 20
+TOTAL_NUM_ROUNDS = 1 # 20
 
 def read_notes(filename):
     with open(filename,'r') as fh:
@@ -26,7 +26,7 @@ def parse_notes(notes):
         test = int(note[3].split('  Test: divisible by ')[1])
         if_true = int(note[4].split('    If true: throw to monkey ')[1])
         if_false = int(note[5].split('    If false: throw to monkey ')[1])
-        # print(f"{if_true}  {if_false}")
+        # print(f"{test}  {if_true}  {if_false}")
 
         attr = {'worry_levels':worry_level, 'operation':operation, 'test':test, 'if_true':if_true, 'if_false':if_false, 'activity':0}
         monkeys.append(attr)
@@ -35,22 +35,25 @@ def parse_notes(notes):
     return monkeys
 
 def inspect_item(level,oper):
+    # print(f"{level}  {oper}")
     new_level = None
 
     if oper['operand'] == 'old':
-        oper['operand'] = level
+        operand = level
     else:
-        oper['operand'] = int(oper['operand'])
+        operand = int(oper['operand'])
 
     if oper['modifier'] == 'old':
-        oper['modifier'] = level
+        modifier = level
     else:
-        oper['modifier'] = int(oper['modifier'])
+        modifier = int(oper['modifier'])
 
     if oper['operator'] == '+':
-        new_level = oper['operand'] + oper['modifier']
+        new_level = operand + modifier
+        print(f"    Worry level increases by {oper['modifier']} to {new_level}.")
     elif oper['operator'] == '*':
-        new_level = oper['operand'] * oper['modifier']
+        new_level = operand * modifier
+        print(f"    Worry level is multiplied by {oper['modifier']} to {new_level}.")
     else:
         print(f"WARNING: Unkown operator!")
     
@@ -66,18 +69,26 @@ def throw_item(test):
 
 def play_keep_away(monkeys):
 
+    # display_items_held(-1,monkeys)
     for round in range(TOTAL_NUM_ROUNDS):
-        for monkey in monkeys:
+        for indx,monkey in enumerate(monkeys):
+            print(f"Monkey {indx}:")
             for item in monkey['worry_levels']:
                 # inspects an item
+                print(f"  Monkey inspects an item with a worry level of {item}.")
                 inspected_level = inspect_item(item, monkey['operation'])
                 # factor in my relief
                 relief_level = inspected_level//3
+                print(f"    Monkey gets bored with item. Worry level is divided by 3 to {relief_level}.")
                 # monkey tests your worry level and throws item
-                if relief_level % monkey['test']:
+                if relief_level % monkey['test'] == 0:
                     monkeys[monkey['if_true']]['worry_levels'].append(relief_level)
+                    print(f"    Current worry level is divisible by {monkey['test']}.")
+                    print(f"    Item with worry level {relief_level} is thrown to monkey {monkey['if_true']}.")                    
                 else:
                     monkeys[monkey['if_false']]['worry_levels'].append(relief_level)
+                    print(f"    Current worry level is not divisible by {monkey['test']}.")
+                    print(f"    Item with worry level {relief_level} is thrown to monkey {monkey['if_false']}.")                    
             monkey['activity'] += len(monkey['worry_levels'])
             monkey['worry_levels'] = []
         display_items_held(round,monkeys)

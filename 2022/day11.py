@@ -1,6 +1,6 @@
 import sys
 
-TOTAL_NUM_ROUNDS = 1 # 20
+TOTAL_NUM_ROUNDS = 20
 
 def read_notes(filename):
     with open(filename,'r') as fh:
@@ -50,10 +50,10 @@ def inspect_item(level,oper):
 
     if oper['operator'] == '+':
         new_level = operand + modifier
-        print(f"    Worry level increases by {oper['modifier']} to {new_level}.")
+        # print(f"    Worry level increases by {oper['modifier']} to {new_level}.")
     elif oper['operator'] == '*':
         new_level = operand * modifier
-        print(f"    Worry level is multiplied by {oper['modifier']} to {new_level}.")
+        # print(f"    Worry level is multiplied by {oper['modifier']} to {new_level}.")
     else:
         print(f"WARNING: Unkown operator!")
     
@@ -72,26 +72,26 @@ def play_keep_away(monkeys):
     # display_items_held(-1,monkeys)
     for round in range(TOTAL_NUM_ROUNDS):
         for indx,monkey in enumerate(monkeys):
-            print(f"Monkey {indx}:")
+            # print(f"Monkey {indx}:")
             for item in monkey['worry_levels']:
                 # inspects an item
-                print(f"  Monkey inspects an item with a worry level of {item}.")
+                # print(f"  Monkey inspects an item with a worry level of {item}.")
                 inspected_level = inspect_item(item, monkey['operation'])
                 # factor in my relief
                 relief_level = inspected_level//3
-                print(f"    Monkey gets bored with item. Worry level is divided by 3 to {relief_level}.")
+                # print(f"    Monkey gets bored with item. Worry level is divided by 3 to {relief_level}.")
                 # monkey tests your worry level and throws item
                 if relief_level % monkey['test'] == 0:
                     monkeys[monkey['if_true']]['worry_levels'].append(relief_level)
-                    print(f"    Current worry level is divisible by {monkey['test']}.")
-                    print(f"    Item with worry level {relief_level} is thrown to monkey {monkey['if_true']}.")                    
+                    # print(f"    Current worry level is divisible by {monkey['test']}.")
+                    # print(f"    Item with worry level {relief_level} is thrown to monkey {monkey['if_true']}.")                    
                 else:
                     monkeys[monkey['if_false']]['worry_levels'].append(relief_level)
-                    print(f"    Current worry level is not divisible by {monkey['test']}.")
-                    print(f"    Item with worry level {relief_level} is thrown to monkey {monkey['if_false']}.")                    
+                    # print(f"    Current worry level is not divisible by {monkey['test']}.")
+                    # print(f"    Item with worry level {relief_level} is thrown to monkey {monkey['if_false']}.")                    
             monkey['activity'] += len(monkey['worry_levels'])
             monkey['worry_levels'] = []
-        display_items_held(round,monkeys)
+        # display_items_held(round,monkeys)
 
     return monkeys
 
@@ -113,8 +113,11 @@ if __name__ == "__main__":
     monkeys = play_keep_away(notes_about_monkeys)
     display_monkey_total_activity(monkeys)
 
-    # print(f"The sum of the signal strengths is {total_strengths}")
-    # part1_ans = total_strengths
+    activity = [m['activity'] for m in monkeys]
+    highest_two_activities = sorted(activity, reverse=True)[:2]
+    monkey_business_level = highest_two_activities[0] * highest_two_activities[1]
+    print(f"The level of monkey business is {monkey_business_level}")
+    part1_ans = monkey_business_level
 
     # print(f"The total number of unique positions the last knot visited is {num_unique_pos_last_knot_visited}")
     # part2_ans = num_unique_pos_last_knot_visited

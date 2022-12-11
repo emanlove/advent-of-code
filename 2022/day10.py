@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     cycles = run_program(program)
 
-    print(f"{cycles}")
+    # print(f"{cycles}")
 
     # import pdb;pdb.set_trace()
     signal_strengths = get_signal_strength(cycles, [20, 60, 100, 140, 180, 220])

@@ -1,6 +1,6 @@
 import sys
 
-TOTAL_NUM_ROUNDS = 20
+TOTAL_NUM_ROUNDS = 10000
 
 def read_notes(filename):
     with open(filename,'r') as fh:
@@ -71,14 +71,16 @@ def play_keep_away(monkeys):
 
     # display_items_held(-1,monkeys)
     for round in range(TOTAL_NUM_ROUNDS):
-        for indx,monkey in enumerate(monkeys):
+        for monkey in monkeys:
+        # for indx,monkey in enumerate(monkeys):
             # print(f"Monkey {indx}:")
             for item in monkey['worry_levels']:
                 # inspects an item
                 # print(f"  Monkey inspects an item with a worry level of {item}.")
                 inspected_level = inspect_item(item, monkey['operation'])
                 # factor in my relief
-                relief_level = inspected_level//3
+                # relief_level = inspected_level//3
+                relief_level = inspected_level
                 # print(f"    Monkey gets bored with item. Worry level is divided by 3 to {relief_level}.")
                 # monkey tests your worry level and throws item
                 if relief_level % monkey['test'] == 0:

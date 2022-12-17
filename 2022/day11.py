@@ -1,4 +1,5 @@
 import sys
+import math
 
 TOTAL_NUM_ROUNDS = 10000
 
@@ -20,8 +21,9 @@ def parse_notes(notes):
         # print(f"{worry_level}")
         # Extract Operation
         oper = note[2].split('  Operation: new = ')[1]
-        operand,operator,modifier = oper.split(' ')
-        operation = {'operand':operand,'operator':operator,'modifier':modifier}
+        # operand,operator,modifier = oper.split(' ')
+        # operation = {'operand':operand,'operator':operator,'modifier':modifier}
+        operation = (lambda old,oper=oper:eval(oper))
         # Extract Test
         test = int(note[3].split('  Test: divisible by ')[1])
         if_true = int(note[4].split('    If true: throw to monkey ')[1])
@@ -34,8 +36,22 @@ def parse_notes(notes):
     # print(f"{len(monkeys)}")
     return monkeys
 
+def modify_worry_level_list(monkeys):
+    total_num_items = sum([len(m['worry_levels']) for m in monkeys])
+
+    for monkey in monkeys:
+        num_items_per_monkey = len(monkey['worry_levels'])
+        monkey['last_item'] = num_items_per_monkey
+        monkey['worry_levels'] = monkey['worry_levels'] + [None for _ in range(total_num_items - num_items_per_monkey)]
+
+    return monkeys
+
 def inspect_item(level,oper):
     # print(f"{level}  {oper}")
+    if level == None:
+        import pdb;pdb.set_trace()
+        return None
+
     new_level = None
 
     if oper['operand'] == 'old':
@@ -69,30 +85,42 @@ def throw_item(test):
 
 def play_keep_away(monkeys):
 
+    # change divider
+    lcm = 1
+    for m in monkeys:
+        lcm *= (lcm*m['test'])//math.gcd(lcm,m['test'])
     # display_items_held(-1,monkeys)
     for round in range(TOTAL_NUM_ROUNDS):
-        for monkey in monkeys:
-        # for indx,monkey in enumerate(monkeys):
+        # for monkey in monkeys:
+        for indx,monkey in enumerate(monkeys):
             # print(f"Monkey {indx}:")
-            for item in monkey['worry_levels']:
+            # import pdb; pdb.set_trace()
+            for item in monkey['worry_levels'][:monkey['last_item']]:
                 # inspects an item
                 # print(f"  Monkey inspects an item with a worry level of {item}.")
-                inspected_level = inspect_item(item, monkey['operation'])
+                # inspected_level = inspect_item(item, monkey['operation'])
+                inspected_level = monkey['operation'](item)
                 # factor in my relief
                 # relief_level = inspected_level//3
                 relief_level = inspected_level
                 # print(f"    Monkey gets bored with item. Worry level is divided by 3 to {relief_level}.")
                 # monkey tests your worry level and throws item
-                if relief_level % monkey['test'] == 0:
-                    monkeys[monkey['if_true']]['worry_levels'].append(relief_level)
+                #if relief_level % monkey['test'] == 0:
+                if relief_level % lcm == 0:
+                    monkeys[monkey['if_true']]['worry_levels'][monkeys[monkey['if_true']]['last_item']] = relief_level
+                    monkeys[monkey['if_true']]['last_item'] += 1
                     # print(f"    Current worry level is divisible by {monkey['test']}.")
                     # print(f"    Item with worry level {relief_level} is thrown to monkey {monkey['if_true']}.")                    
                 else:
-                    monkeys[monkey['if_false']]['worry_levels'].append(relief_level)
+                    # import pdb;pdb.set_trace()
+                    monkeys[monkey['if_false']]['worry_levels'][monkeys[monkey['if_false']]['last_item']] = relief_level
+                    monkeys[monkey['if_false']]['last_item'] += 1
                     # print(f"    Current worry level is not divisible by {monkey['test']}.")
                     # print(f"    Item with worry level {relief_level} is thrown to monkey {monkey['if_false']}.")                    
-            monkey['activity'] += len(monkey['worry_levels'])
-            monkey['worry_levels'] = []
+            monkey['activity'] += monkey['last_item']
+            # monkey['activity'] += len(monkey['worry_levels'])
+            monkey['last_item'] = 0
+            # monkey['worry_levels'] = []
         # display_items_held(round,monkeys)
 
     return monkeys
@@ -112,7 +140,11 @@ if __name__ == "__main__":
 
     notes = read_notes(file)
     notes_about_monkeys = parse_notes(notes)
-    monkeys = play_keep_away(notes_about_monkeys)
+    lcm = 1
+    for m in notes_about_monkeys:
+        lcm
+    monkeys = modify_worry_level_list(notes_about_monkeys)
+    monkeys = play_keep_away(monkeys)
     display_monkey_total_activity(monkeys)
 
     activity = [m['activity'] for m in monkeys]

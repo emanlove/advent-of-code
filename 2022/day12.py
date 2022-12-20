@@ -9,6 +9,18 @@ Some thoughts ...
 """
 
 import sys
+import copy
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 def read_map(filename,cleanup=True):
     with open(filename,'r') as fh:
@@ -74,6 +86,17 @@ def step_up_spots(map,neighbors,frm,to):
 
     return step_up_points
 
+def display_map(map,nCols):
+    rows = [map[x:x+nCols] for x in range(0,len(map),nCols)]
+    strings = [''.join(r) for r in rows]
+    print("\n".join(strings))
+
+def display_map_level(map,nCols,level):
+    for indx,point in enumerate(map):
+        if point != level:
+            map[indx]='.'
+    display_map(map,nCols)    
+
 if __name__ == "__main__":
     file = sys.argv[1]
 
@@ -82,10 +105,34 @@ if __name__ == "__main__":
 
     letters = [chr(o) for o in range(ord('a'),ord('a')+26)]
     steps = list(zip(letters[:-1],letters[1:]))
-    for step in steps[2:]:
+    # for step in steps[2:]:  # start with stepping up from c to d
+    for step in steps:  # start with stepping up from a to b
         stepping_points = step_up_spots(map,neighbors,step[0],step[1])
         print(f"steps {step}: {stepping_points}")
-    
+
+    # display_map(map,nCols)
+
+    # step_from_b_to_c = step_up_spots(map,neighbors,'b','c')
+    # bc_map = copy.deepcopy(map)
+    # for step in step_from_b_to_c:
+    #     bc_map[step[0]] = bcolors.BOLD + bc_map[step[0]] + bcolors.ENDC
+    # display_map(bc_map,nCols)
+
+    display_map_level(map,nCols,'k')
+
+    total_steps = [
+        8,              #a-b
+        1,              #b-c
+        18+9+23+15+8,   #c-d
+        1,  #d-e
+        10, #e-f
+        12, #f-g
+        11, #g-h #12r
+        10, #h-i #9r
+        11, #i-j
+        11, #j-k
+
+        ]
     # print(f"The level of monkey business is {monkey_business_level}")
     # part1_ans = monkey_business_level
 

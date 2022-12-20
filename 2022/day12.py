@@ -118,7 +118,7 @@ if __name__ == "__main__":
     #     bc_map[step[0]] = bcolors.BOLD + bc_map[step[0]] + bcolors.ENDC
     # display_map(bc_map,nCols)
 
-    display_map_level(map,nCols,['j','k','l'])
+    display_map_level(map,nCols,['u','v','w','x','y','z'])
 
     total_steps = [
         8,              #a-b
@@ -132,9 +132,28 @@ if __name__ == "__main__":
         11, #i-j
         11, #j-k
         12, #k-l
+        11, #l-m mid-m uppr-l
+        11, #m-n
+        12, #n-o mid-o
+        12, #o-p  uppr-p
+        10, #p-q  leftq
+        12, #q-r  botr
+        9,  #r-p  botlp
+        12, #p-q  leftq 13rq
+        13, #q-r  upplr 12rq-botr
+        12, #r-s 
+        12, #s-t  leftt 
+        10, #t-u  botU
+        12, #u-v  rightv
+        12, #v-w  top w
+        13, #w-x  rightx
+        5,  #x-z
         ]
-    # print(f"The level of monkey business is {monkey_business_level}")
-    # part1_ans = monkey_business_level
+
+    import pdb;pdb.set_trace()
+
+    print(f"The shortest path is {sum(total_steps)}")
+    part1_ans = sum(total_steps)
 
     # print(f"The total number of unique positions the last knot visited is {num_unique_pos_last_knot_visited}")
     # part2_ans = num_unique_pos_last_knot_visited

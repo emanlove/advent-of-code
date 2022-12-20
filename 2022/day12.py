@@ -93,7 +93,7 @@ def display_map(map,nCols):
 
 def display_map_level(map,nCols,level):
     for indx,point in enumerate(map):
-        if point != level:
+        if point not in level:
             map[indx]='.'
     display_map(map,nCols)    
 
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     #     bc_map[step[0]] = bcolors.BOLD + bc_map[step[0]] + bcolors.ENDC
     # display_map(bc_map,nCols)
 
-    display_map_level(map,nCols,'k')
+    display_map_level(map,nCols,['j','k','l'])
 
     total_steps = [
         8,              #a-b
@@ -131,7 +131,7 @@ if __name__ == "__main__":
         10, #h-i #9r
         11, #i-j
         11, #j-k
-
+        12, #k-l
         ]
     # print(f"The level of monkey business is {monkey_business_level}")
     # part1_ans = monkey_business_level

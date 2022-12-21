@@ -1,5 +1,7 @@
 import sys
 
+# sys.setrecursionlimit(1500)
+
 def read_packets(filename):
     with open(filename,'r') as fh:
         data = fh.readlines()
@@ -33,11 +35,11 @@ def compare(left,right,is_inorder):
         else:
             if isinstance(litem,int):
                 litem = [litem]
-                ritem = [ritem[0]]
+                ritem = [ritem[:0]]
 
             if isinstance(ritem,int):
                 ritem = [ritem]
-                litem = [litem[0]]
+                litem = [litem[:0]]
 
             is_inorder = compare(litem,ritem,is_inorder)
 
@@ -51,8 +53,12 @@ if __name__ == "__main__":
     num_of_packets_in_right_order = 0
     packets_in_right_order = []
     for pindx,pair in enumerate(packets):
+        print(f"{pindx}")
         # import pdb;pdb.set_trace()
+        # try:
         inorder = compare(pair[0],pair[1],True)
+        # except RecursionError:
+            # print(f"{pindx}")
         if inorder:
             num_of_packets_in_right_order += 1
             packets_in_right_order.append(pindx+1)

@@ -33,9 +33,12 @@ def compare(left,right,is_inorder):
         else:
             if isinstance(litem,int):
                 litem = [litem]
+                ritem = [ritem[0]]
+
             if isinstance(ritem,int):
                 ritem = [ritem]
-            
+                litem = [litem[0]]
+
             is_inorder = compare(litem,ritem,is_inorder)
 
     return is_inorder
@@ -56,6 +59,7 @@ if __name__ == "__main__":
     
     print(f"The number of packets that are in the right order is {num_of_packets_in_right_order}")
     print(f"The packets that are in the right order are {packets_in_right_order}")
+    print(f"The sum of the indices of those pairs is {sum(packets_in_right_order)}")
     part1_ans = sum(packets_in_right_order)
 
     # print(f"The total number of unique positions the last knot visited is {num_unique_pos_last_knot_visited}")

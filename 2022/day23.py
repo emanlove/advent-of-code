@@ -30,7 +30,7 @@ def hasSE(pnt,elves): return (pnt[0]+1,pnt[1]+1) in elves
 
 #def moveAtAll(pnt,elves):
 def notMove(pnt,elves):
-    return not (hasNW or hasW or hasNE or hasW  or hasE  or hasSW or hasS  or hasSE)
+    return not (hasNW(pnt,elves) or hasW(pnt,elves) or hasNE(pnt,elves) or hasW(pnt,elves) or hasE(pnt,elves) or hasSW(pnt,elves) or hasS(pnt,elves) or hasSE(pnt,elves))
 
 def moveN(pnt,elves):
     if not hasNW(pnt,elves) and not hasN(pnt,elves) and not hasNE(pnt,elves):
@@ -79,12 +79,10 @@ if __name__ == "__main__":
 
     for round in range(TOTAL_NUM_ROUNDS):
         for elf in elves:
-            # import pdb;pdb.set_trace()
             if notMove(elf,elves):
                 elves[elf] = elf
             else:
                 for move in move_order:
-                    # import pdb;pdb.set_trace()
                     if next:=locals()[move](elf,elves):
                         elves[elf] = next
                         break
@@ -98,7 +96,6 @@ if __name__ == "__main__":
             break
 
         # find unique moves and move
-        # import pdb;pdb.set_trace()
         cnt = Counter(elves.values())
         for elf,move_to in elves.items():
             if cnt[move_to] > 1 or elf==move_to:
@@ -111,9 +108,6 @@ if __name__ == "__main__":
 
         # advance move_order
         move_order = move_order[1:] + move_order[:1]
-
-
-    # display_map(map,nCols)
 
     # print(f"The shortest path is {sum(total_steps)}")
     # part1_ans = sum(total_steps)

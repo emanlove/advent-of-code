@@ -28,14 +28,7 @@ def isSE(pnt,elves): return (pnt[0]+1,pnt[1]+1) in elves
 move_order = ['moveN', 'moveS' 'moveW', 'moveE']
 
 def moveAtAll(pnt,elves):
-    return (not isNW and
-            not isW  and
-            not isNE and
-            not isW  and
-            not isE  and
-            not isSW and
-            not isS  and
-            not isSE)
+    return not (isNW or isW or isNE or isW  or isE  or isSW or isS  or isSE)
 
 def moveN(pnt,elves):
     if not isNW(pnt,elves) and not isN(pnt,elves) and not isNE(pnt,elves):

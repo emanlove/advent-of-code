@@ -1,7 +1,7 @@
 import sys
 from collections import Counter
 
-TOTAL_NUM_ROUNDS = 10
+TOTAL_NUM_ROUNDS = 5000
 
 def read_map(filename,cleanup=True):
     elves = {}
@@ -30,7 +30,7 @@ def hasSE(pnt,elves): return (pnt[0]+1,pnt[1]+1) in elves
 
 #def moveAtAll(pnt,elves):
 def notMove(pnt,elves):
-    return not (hasNW(pnt,elves) or hasW(pnt,elves) or hasNE(pnt,elves) or hasW(pnt,elves) or hasE(pnt,elves) or hasSW(pnt,elves) or hasS(pnt,elves) or hasSE(pnt,elves))
+    return not (hasNW(pnt,elves) or hasN(pnt,elves) or hasNE(pnt,elves) or hasW(pnt,elves) or hasE(pnt,elves) or hasSW(pnt,elves) or hasS(pnt,elves) or hasSE(pnt,elves))
 
 def moveN(pnt,elves):
     if not hasNW(pnt,elves) and not hasN(pnt,elves) and not hasNE(pnt,elves):
@@ -57,7 +57,6 @@ def moveE(pnt,elves):
         return ()
 
 def display_map(elves,nRows,nCols):
-    # map = ['.'*nCols for _ in range(nRows)]
     points = [['.' for c in range(nCols)] for r in range(nRows)]
     for elf in elves:
         try:
@@ -70,6 +69,16 @@ def display_map(elves,nRows,nCols):
     for row in map:
         print(f"{row}")
 
+def number_of_empty_ground_tiles(elves):
+    row_positions = [elf[0] for elf in elves]
+    min_row = min(row_positions); max_row = max(row_positions)
+    col_positions = [elf[1] for elf in elves]
+    min_col = min(col_positions); max_col = max(col_positions)
+    rect_rows = max_row-min_row+1; rect_col = max_col-min_col+1
+    num_empty_tiles = rect_rows*rect_col - len(elves)
+
+    return num_empty_tiles
+
 if __name__ == "__main__":
     file = sys.argv[1]
 
@@ -79,6 +88,9 @@ if __name__ == "__main__":
 
     for round in range(TOTAL_NUM_ROUNDS):
         for elf in elves:
+            # if round==1 and elf==(7,2):
+            #     import pdb;pdb.set_trace()
+
             if notMove(elf,elves):
                 elves[elf] = elf
             else:
@@ -88,7 +100,6 @@ if __name__ == "__main__":
                         break
 
         # print(f"{elves}")
-        display_map(elves,nr,nc)
 
         # if all elves move position equal there current position (ie they need not move) we can stop
         if all([True if elf==elves[elf] else False for elf in elves]):
@@ -106,11 +117,17 @@ if __name__ == "__main__":
                 elves[move_to] = ()
                 del elves[elf]
 
+        # display
+        # print(f"\n== End of Round {round+1} ==")
+        # display_map(elves,nr,nc)
+
         # advance move_order
         move_order = move_order[1:] + move_order[:1]
 
-    # print(f"The shortest path is {sum(total_steps)}")
-    # part1_ans = sum(total_steps)
+    n_tiles = number_of_empty_ground_tiles(elves)
+
+    print(f"The number of empty ground tiles is {n_tiles}")
+    part1_ans = n_tiles
 
     # print(f"The total number of unique positions the last knot visited is {num_unique_pos_last_knot_visited}")
     # part2_ans = num_unique_pos_last_knot_visited

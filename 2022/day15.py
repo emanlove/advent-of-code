@@ -1,7 +1,7 @@
 import sys
 
-MAX = 4000001
-# MAX = 21
+# MAX = 4000001
+MAX = 21
 
 def read_sensor_data(filename):
     with open(filename,'r') as fh:
@@ -125,6 +125,34 @@ def get_m_dists(pings):
     
     return m_dists
 
+def build_coverage_set(pings):
+    """
+    Build coverage map ignoring location of beacons which will be subtracted out later
+
+    Coverage map will show by sensor and will need to be flatten out by row later
+    """
+    ping_sets = set()
+    for indx,ping in enumerate(pings):
+        Sx = ping[0][0]; Sy = ping[0][1]        
+        Bx = ping[1][0]; By = ping[1][1]        
+        m_dist = abs(Sx-Bx) + abs(Sy-By)
+
+        y = Sy
+        y_reach = m_dist
+        ping_sets |= set(range(Sx-y_reach,Sx+y_reach+1))
+
+        for d in range(1,m_dist+1):
+            y = Sy + d
+            y_reach = m_dist-d
+            ping_sets |= set(range(Sx-y_reach,Sx+y_reach+1))
+
+            y = Sy - d
+            y_reach = m_dist-d
+            ping_sets |= set(range(Sx-y_reach,Sx+y_reach+1))
+
+    return ping_sets
+
+
 if __name__ == "__main__":
     file = sys.argv[1]
     query_y = int(sys.argv[2])
@@ -151,35 +179,38 @@ if __name__ == "__main__":
 
     # import pdb;pdb.set_trace()
 
-    m_dists = get_m_dists(pings)
+    # m_dists = get_m_dists(pings)
 
-    for P in range(MAX**2):
-        Px = P%MAX
-        Py = P//MAX
+    # for P in range(MAX**2):
+    #     Px = P%MAX
+    #     Py = P//MAX
 
-        in_range_of_sensor = False
-        for sensor in m_dists:
-            Sx = sensor[0][0];Sy = sensor[0][1]
-            dist = sensor[1]
-            if abs(Sx-Px) + abs(Sy-Py) <= dist:
-                in_range_of_sensor = True
-                break
-                #found a sesnoer it is in range of and thus no need to continue searching
-                # in_range_of_sensor.append(True)
-            # else:
-            #     in_range_of_sensor.append(False)
+    #     in_range_of_sensor = False
+    #     for sensor in m_dists:
+    #         Sx = sensor[0][0];Sy = sensor[0][1]
+    #         dist = sensor[1]
+    #         if abs(Sx-Px) + abs(Sy-Py) <= dist:
+    #             in_range_of_sensor = True
+    #             break
+    #             #found a sesnoer it is in range of and thus no need to continue searching
+    #             # in_range_of_sensor.append(True)
+    #         # else:
+    #         #     in_range_of_sensor.append(False)
         
-        if not in_range_of_sensor:
-            # found the point
-            if MAX != 21:
-                tuning_frequency_for_distress_beacon = P
-            else:
-                tuning_frequency_for_distress_beacon = Py+Px*4000000
+    #     if not in_range_of_sensor:
+    #         # found the point
+    #         if MAX != 21:
+    #             tuning_frequency_for_distress_beacon = P
+    #         else:
+    #             tuning_frequency_for_distress_beacon = Py+Px*4000000
             
-                print(f"The tuning frequency for this distress beacon is {tuning_frequency_for_distress_beacon}")
-                part1_ans = tuning_frequency_for_distress_beacon
+    #             print(f"The tuning frequency for this distress beacon is {tuning_frequency_for_distress_beacon}")
+    #             part1_ans = tuning_frequency_for_distress_beacon
+    covered = build_coverage_set(pings)
+    all_pos = set(range(MAX**2))
 
-
+    tuning_frequency_for_distress_beacon = all_pos - covered
+    import pdb;pdb.set_trace()
 
     if len(sys.argv) >= 4:
         if int(sys.argv[3]) == part1_ans:

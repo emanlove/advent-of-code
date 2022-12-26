@@ -35,24 +35,25 @@ def build_scan_map(scans):
                 depth = end_points[0][1]
                 min_col = min([end_points[0][0] , end_points[1][0]])
                 max_col = max([end_points[0][0] , end_points[1][0]])
-                for col in range(min_col,max_col):
+                for col in range(min_col,max_col+1):
                     if col not in map:
                         map[col] = []
                     
                     map[col] += [depth]
 
-    # was going to remove possible duplicates but actually don't need to for my solution
-    # for scan_line in map:
-    #     pass
+    # remove possible duplicates and sort
+    for scan_line in map:
+        map[scan_line] = sorted(list(set(map[scan_line])))
 
     return map
 
 def fall_further(depth,col,map):
-    # .. doing this one step at a time .. think one might be able to drop it down without
-    #    going down one depth at a time. But for now lets explore this as is
     # check below
     if depth+1 not in map[col]:
-        return depth+1, col
+        # drop down to next blocked depth
+        # this will raise an index error is drops out below
+        next_blocked_depth = [drop_to for drop_to in sorted(map[col]) if depth<drop_to][0] - 1        
+        return next_blocked_depth, col
     elif depth+1 not in map[col-1]:
         return depth+1, col-1
     elif depth+1 not in map[col+1]:
@@ -71,8 +72,6 @@ if __name__ == "__main__":
     units = 0
     try:        
         while True:
-            # initial_depth = min(map[DROP_LINE])-1
-            # initial_col = DROP_LINE
             sand_depth = min(map[DROP_LINE])-1
             sand_col = DROP_LINE
             unsettled = True
@@ -86,8 +85,8 @@ if __name__ == "__main__":
                     sand_col = move_to_col
             units +=1
             print(f"{units}")
-
     except KeyError:
+        # Note: this only catches those dropping off the sides
         print(f"The units of sand that come to rest before sand starts flowing into the abyss below is {units}")
         part1_ans = units
 

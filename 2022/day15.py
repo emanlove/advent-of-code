@@ -1,5 +1,8 @@
 import sys
 
+MAX = 4000001
+# MAX = 21
+
 def read_sensor_data(filename):
     with open(filename,'r') as fh:
         sensor_data = [line.rstrip('\n') for line in fh]
@@ -110,7 +113,17 @@ def simple_range_combination(ranges):
     for r in ranges:
         combined += (list(range(r[0],r[1]+1)))
 
-    return len(list(set(combined)))
+    return len(set(combined))
+
+def get_m_dists(pings):
+    m_dists = []
+    for ping in pings:
+        Sx = ping[0][0]; Sy = ping[0][1]        
+        Bx = ping[1][0]; By = ping[1][1]        
+        m_dist = abs(Sx-Bx) + abs(Sy-By)
+        m_dists.append(((Sx,Sy),m_dist))
+    
+    return m_dists
 
 if __name__ == "__main__":
     file = sys.argv[1]
@@ -135,6 +148,38 @@ if __name__ == "__main__":
     num_pos = simple_range_combination(empty_ranges_on_y)
     print(f"The number of positions a beacon cannot possibly exist is {num_pos}")
     part1_ans = num_pos
+
+    # import pdb;pdb.set_trace()
+
+    m_dists = get_m_dists(pings)
+
+    for P in range(MAX**2):
+        Px = P%MAX
+        Py = P//MAX
+
+        in_range_of_sensor = False
+        for sensor in m_dists:
+            Sx = sensor[0][0];Sy = sensor[0][1]
+            dist = sensor[1]
+            if abs(Sx-Px) + abs(Sy-Py) <= dist:
+                in_range_of_sensor = True
+                break
+                #found a sesnoer it is in range of and thus no need to continue searching
+                # in_range_of_sensor.append(True)
+            # else:
+            #     in_range_of_sensor.append(False)
+        
+        if not in_range_of_sensor:
+            # found the point
+            if MAX != 21:
+                tuning_frequency_for_distress_beacon = P
+            else:
+                tuning_frequency_for_distress_beacon = Py+Px*4000000
+            
+                print(f"The tuning frequency for this distress beacon is {tuning_frequency_for_distress_beacon}")
+                part1_ans = tuning_frequency_for_distress_beacon
+
+
 
     if len(sys.argv) >= 4:
         if int(sys.argv[3]) == part1_ans:

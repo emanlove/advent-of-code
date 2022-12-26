@@ -61,6 +61,17 @@ def fall_further(depth,col,map):
     else:
         return None, None
 
+PART2 = True
+
+def add_floor_to_map(depth,map):
+    # some abitruary amount left and right
+    for col in range(500-2*depth,500+2*depth):
+        if col not in map:
+            map[col] = []
+        
+        map[col] += [depth]
+
+    return map
 
 if __name__ == "__main__":
     file = sys.argv[1]
@@ -69,10 +80,19 @@ if __name__ == "__main__":
     map = build_scan_map(scans)
     rock_map = deepcopy(map)
 
+    if PART2:
+        scan_depth = max([max(map[line]) for line in map])
+        floor = scan_depth + 2
+        map = add_floor_to_map(floor,map)
+
     units = 0
     try:        
         while True:
             sand_depth = min(map[DROP_LINE])-1
+            if PART2 and sand_depth < 0:
+                print(f"The units of sand that come to rest before the source is blocked is {units}")
+                part1_ans = units
+                break
             sand_col = DROP_LINE
             unsettled = True
             while unsettled:
@@ -84,7 +104,7 @@ if __name__ == "__main__":
                     sand_depth = move_to_depth
                     sand_col = move_to_col
             units +=1
-            print(f"{units}")
+            # print(f"{units}")
     except KeyError:
         # Note: this only catches those dropping off the sides
         print(f"The units of sand that come to rest before sand starts flowing into the abyss below is {units}")

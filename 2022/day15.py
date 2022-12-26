@@ -1,7 +1,7 @@
 import sys
 
-# MAX = 4000001
-MAX = 21
+MAX = 4000001
+# MAX = 21
 
 def read_sensor_data(filename):
     with open(filename,'r') as fh:
@@ -115,6 +115,22 @@ def simple_range_combination(ranges):
 
     return len(set(combined))
 
+def reduce_ranges(ranges):
+    ord_ranges = sorted(ranges)
+    # import pdb;pdb.set_trace()
+    reduced = [(0,0)]
+    for ordr in ord_ranges:
+        last = reduced[-1]
+        if ordr[0] > last[1]:
+            # import pdb;pdb.set_trace()
+            reduced.append(ordr)
+            # also might have found answer
+            # print(f"{last[1]}  {ordr[0]}")
+            return last[1]+1            
+        if ordr[1] > last[1]:
+            reduced[-1] = (last[0],ordr[1])
+    #     elif
+
 def get_m_dists(pings):
     m_dists = []
     for ping in pings:
@@ -179,6 +195,16 @@ if __name__ == "__main__":
 
     # import pdb;pdb.set_trace()
 
+    for y in range(MAX): 
+        empty_ranges_on_y = []
+        for ping in pings:
+            range_on_y = determine_if_sensor_coverage_includes_y(ping,y)
+            if range_on_y:
+                empty_ranges_on_y.append(range_on_y)
+        found = reduce_ranges(empty_ranges_on_y)
+        if found:
+            print(f"{y}  {found}")
+            print(y+found*4000000)
     # m_dists = get_m_dists(pings)
 
     # for P in range(MAX**2):
@@ -206,11 +232,12 @@ if __name__ == "__main__":
             
     #             print(f"The tuning frequency for this distress beacon is {tuning_frequency_for_distress_beacon}")
     #             part1_ans = tuning_frequency_for_distress_beacon
-    covered = build_coverage_set(pings)
-    all_pos = set(range(MAX**2))
 
-    tuning_frequency_for_distress_beacon = all_pos - covered
-    import pdb;pdb.set_trace()
+    # covered = build_coverage_set(pings)
+    # all_pos = set(range(MAX**2))
+
+    # tuning_frequency_for_distress_beacon = all_pos - covered
+    # import pdb;pdb.set_trace()
 
     if len(sys.argv) >= 4:
         if int(sys.argv[3]) == part1_ans:

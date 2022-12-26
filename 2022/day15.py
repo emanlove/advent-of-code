@@ -88,19 +88,51 @@ def get_coverage_on_y(y):
 
     return y_coverage_unique    
 
+def determine_if_sensor_coverage_includes_y(ping,y):
+    Sx = ping[0][0]; Sy = ping[0][1]        
+    Bx = ping[1][0]; By = ping[1][1]        
+    m_dist = abs(Sx-Bx) + abs(Sy-By)
+
+    empty_range = ()
+    y_dist = abs(Sy-y)
+    if y_dist <= m_dist:
+        if By == y:  # beacon on y
+            if Bx < Sx:
+                empty_range = (Bx+1,Sx+m_dist-y_dist)
+            elif Bx > Sx:
+                empty_range = (Sx-m_dist+y_dist,Bx-1)            
+        else:
+            empty_range = (Sx-m_dist+y_dist,Sx+m_dist-y_dist)
+    return empty_range
+
+def simple_range_combination(ranges):
+    combined = []
+    for r in ranges:
+        combined += (list(range(r[0],r[1]+1)))
+
+    return len(list(set(combined)))
+
 if __name__ == "__main__":
     file = sys.argv[1]
     query_y = int(sys.argv[2])
 
     data = read_sensor_data(file)
     pings = parse_sensor_data(data)
-    map = build_coverage_map(pings)
 
-    ybeacons = get_beacons_on_y(pings,query_y)
-    ycoverage = get_coverage_on_y(map[query_y])
+    empty_ranges_on_y = []
+    for ping in pings:
+        range_on_y = determine_if_sensor_coverage_includes_y(ping,query_y)
+        if range_on_y:
+            empty_ranges_on_y.append(range_on_y)
+    
+    # map = build_coverage_map(pings)
 
-    num_pos = len(ycoverage - ybeacons)
+    # ybeacons = get_beacons_on_y(pings,query_y)
+    # ycoverage = get_coverage_on_y(map[query_y])
 
+    # num_pos = len(ycoverage - ybeacons)
+
+    num_pos = simple_range_combination(empty_ranges_on_y)
     print(f"The number of positions a beacon cannot possibly exist is {num_pos}")
     part1_ans = num_pos
 

@@ -109,8 +109,9 @@ def read_schematic(filename):
     for part in part_numbers:
         if len(part_numbers[part]) > 1:
             print("!!WARNING!! Repeated part number")
-        start = part_numbers[part][0]   # assuming no repeated part numbers
-        part_numbers_digit_pos[part] = [i for i in range(start,start+len(part))]
+        for start in part_numbers[part]:
+            part_numbers_digit_pos[start] = { 'positions' : [i for i in range(start,start+len(part))] ,
+                                              'part'      : int(part) }
 
     for star in stars:
         adjacent = set( [star-nCols-1, star-nCols, star-nCols+1,
@@ -118,9 +119,9 @@ def read_schematic(filename):
                          star+nCols-1, star+nCols, star+nCols+1] )
 
         # for point in adjacent:
-        for part in part_numbers_digit_pos:
-            if set(part_numbers_digit_pos[part]) & adjacent:
-                stars[star].append(int(part))
+        for start in part_numbers_digit_pos:
+            if set(part_numbers_digit_pos[start]['positions']) & adjacent:
+                stars[star].append(part_numbers_digit_pos[start]['part'])
 
     gear_ratios = []
     for star in stars:

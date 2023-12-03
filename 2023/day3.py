@@ -8,7 +8,6 @@ def read_schematic(filename):
     #rows = len(lines)
 
     schematic = ''.join(lines)
-    schematic_range = range(len())
     objs = schematic.split('.')
 
     part_numbers = {}
@@ -34,20 +33,39 @@ def read_schematic(filename):
 
     symbol_chars = symbols.keys()
 
+    valid_parts = []
     for part in part_numbers:
         for duplicate_start in part_numbers[part]:
-            for index,digit in enumerate(part):
-                pos = duplicate_start + index
-                adjacent = [pos-nCols-1, pos-nCols, pos-nCols+1,
-                             pos-1,                  pos+1,
-                             pos+nCols-1, pos+nCols, pos+nCols+1]
+            possible_part = valid_part_number_check(part,duplicate_start,schematic,nCols,symbol_chars)
 
-                for point in adjacent:
-                    if point in schematic_range and schematic[point] in symbol_chars:
+            if possible_part is not None:
+                valid_parts.append(possible_part)
+            # for index,digit in enumerate(part):
+            #     pos = duplicate_start + index
+            #     adjacent = [pos-nCols-1, pos-nCols, pos-nCols+1,
+            #                  pos-1,                  pos+1,
+            #                  pos+nCols-1, pos+nCols, pos+nCols+1]
+
+            #     for point in adjacent:
+            #         if point in schematic_range and schematic[point] in symbol_chars:
+            #             # add part number to list of valid part numbers
+            #             pass
+
+    print(f"The sum of all of the part numbers in the engine schematic is {sum(valid_parts)}")
+
+def valid_part_number_check(part, start_pos, schematic, nCols, symbol_chars):
+    schematic_range = range(len(schematic))
+    for index,digit in enumerate(part):
+        pos = start_pos + index
+        adjacent = [pos-nCols-1, pos-nCols, pos-nCols+1,
+                    pos-1,                  pos+1,
+                    pos+nCols-1, pos+nCols, pos+nCols+1]
+
+        for point in adjacent:
+            if point in schematic_range and schematic[point] in symbol_chars:
                         # add part number to list of valid part numbers
-                        pass
-
-    print(f"The sum of all of the part numbers in the engine schematic is ")
+                        return int(part)
+    return None
 
 def is_number(obj):
     try:
@@ -55,9 +73,6 @@ def is_number(obj):
         return True
     except ValueError:
         return False
-
-
-
 
 if __name__ == "__main__":
     file = sys.argv[1]

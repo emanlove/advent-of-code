@@ -46,7 +46,7 @@ def read_schematic(filename):
                 pos = None
         # reached end of line and need to ..
         if obj:  # .. close out number if there
-            print(f"{obj}")
+            # print(f"{obj}")
             if obj not in part_numbers:
                 part_numbers[obj] = []                    
             part_numbers[obj].append(pos)
@@ -99,6 +99,35 @@ def read_schematic(filename):
             #             pass
 
     print(f"The sum of all of the part numbers in the engine schematic is {sum(valid_parts)}")
+
+    stars =  {indx: [] for indx in symbols['*']}
+    possible_gears = {}
+
+    part_numbers_digit_pos = {}
+    # import pdb;pdb.set_trace()
+
+    for part in part_numbers:
+        if len(part_numbers[part]) > 1:
+            print("!!WARNING!! Repeated part number")
+        start = part_numbers[part][0]   # assuming no repeated part numbers
+        part_numbers_digit_pos[part] = [i for i in range(start,start+len(part))]
+
+    for star in stars:
+        adjacent = set( [star-nCols-1, star-nCols, star-nCols+1,
+                         star-1,                   star+1,
+                         star+nCols-1, star+nCols, star+nCols+1] )
+
+        # for point in adjacent:
+        for part in part_numbers_digit_pos:
+            if set(part_numbers_digit_pos[part]) & adjacent:
+                stars[star].append(int(part))
+
+    gear_ratios = []
+    for star in stars:
+        if len(stars[star])==2:
+            gear_ratios.append(stars[star][0]*stars[star][1])
+
+    print(f"The sum of all of the gear ratios in your engine schematic is {sum(gear_ratios)}")
 
 def valid_part_number_check(part, start_pos, schematic, nCols, symbol_chars):
     schematic_range = range(len(schematic))

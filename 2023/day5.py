@@ -4,9 +4,15 @@ def read_almanac(filename):
     with open(filename,'r') as fh:
         lines = [line.rstrip('\n') for line in fh]
 
-    # read seeds
-    _, *seeds = lines[0].split()
-    seeds = [int(s) for s in seeds]
+    # # read seeds - Part 1
+    # _, *seeds = lines[0].split()
+    # seeds = [int(s) for s in seeds]
+
+    # read seed_ranges - Part 2
+    _, *srInts = lines[0].split()
+    sr = [int(s) for s in srInts]
+    seed_ranges = [list(range(sr[i],sr[i]+sr[i+1])) for i in range(0,len(sr),2)]
+    seeds = [item for ranges in seed_ranges for item in ranges]
 
     # maps
     maps = {}

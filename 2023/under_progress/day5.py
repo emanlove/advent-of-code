@@ -81,14 +81,15 @@ def read_almanac_part2(filename):
         elif line != '':
             destination_range_start, source_range_start, range_length = line.split()
             # print(f"{map_name}: {destination_range_start} {source_range_start} {range_length}")
-            maps[map_name].append( (int(source_range_start), int(destination_range_start), int(range_length)) )
+            # maps[map_name].append( (int(source_range_start), int(destination_range_start), int(range_length)) )
+            maps[map_name].append( {'s':int(source_range_start), 'd':int(destination_range_start), 'l':int(range_length) } )
         else:
             continue
 
     # As the categories are hard code and the same for the sample and problem data I am not going
     # to make these generic
     # print(f"{maps}")
-def map_source_ranges_to_destination_ranges(named_map, source):
+def map_source_ranges_to_destination_ranges(named_map, source_ranges):
     # mapped_source_range = []
     # mapped_destination_range = []
 
@@ -108,13 +109,59 @@ def map_source_ranges_to_destination_ranges(named_map, source):
     #         # if s2d
 
     # while there is still maps
+    # ?while there is still unmapped sources?
     #   see what source match them
     #   .. and if a match is found move that part of the source to destination shifted
     #   else get rid of that portion of the map
     # then if there is any remaining unmapped source copy it of to the destination
     #
 
-    
+    destination = []
+    # while source:
+    # while there is still maps
+    while named_map:
+        s2d = named_map.pop(0)
+        # see what source match them
+        # for source in sources or while sources??
+        for source in source_ranges:
+            # check if map out of range for this source ..
+            if ( (s2d['s']+s2d['l']) < source[0] ) or ( (source[0]+source[1]) < s2d['s'] ):   # map out of range for this source            
+                continue
+            # .. else it overlaps
+            if s2d['s'] < source[0]:   # map starts before source range  
+                # add new map for section leading up to source
+                # record start mapped index relative to source = 0
+                pass
+            else:                      # map starts within source range  
+                # record start mapped index relative to source = s2d['s']-source[0] 
+                pass
+
+            if (s2d['s']+s2d['l']) > (source[0]+source[1]):    # map ends past source range
+                # add new map for section going past source
+                # record end mapped index relative to source end = source[0]+source[1]
+                # ?? record end mapped index relative to source start = source[1] ??
+                pass
+            else:                                              # map ends within source range
+                # ?? record end mapped index relative to source end = source[0]+source[1] - xxxxx ??
+                pass
+
+            # pop source and push to destination
+
+        # if false:      # map start before but leds into source range
+        #     pass
+        # elif false:    # map starts within and ends with source range
+        #     pass
+        # else:          # map starts within but ends outside the source range
+        #     pass
+
+
+    # while there is still unmapped sources
+    #   see what source match them
+    #   .. and if a match is found move that part of the source to destination shifted
+    #   else get rid of that portion of the map
+    # then if there is any remaining unmapped source copy it of to the destination
+    #
+
 def find_overlap():
     pass
 

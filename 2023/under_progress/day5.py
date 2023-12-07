@@ -88,33 +88,23 @@ def read_almanac_part2(filename):
 
     # As the categories are hard code and the same for the sample and problem data I am not going
     # to make these generic
-    # print(f"{maps}")
+
+    # seed to soil ...
+    # ...
+
+    print(f"The lowest location number that corresponds to any of the initial seed numbers is ...")
+    
 def map_source_ranges_to_destination_ranges(named_map, source_ranges):
-    # mapped_source_range = []
-    # mapped_destination_range = []
+    """Pseodo-code for mapping source to destination
 
-    # for mapping in named_map:
-    #     mapped_source_range.append( [ mapping[0], mapping[0]+mapping[2] ] )
-    #     mapped_destination_range.append( [ mapping[1], mapping[1]+mapping[2] ] )
-
-    # while mapped_source_range
-
-    # destination = []
-    # while named_map:
-    #     s2d = named_map.pop(0)
-
-    #     for range_set in source:
-    #         # find overlap
-    #         pass
-    #         # if s2d
-
-    # while there is still maps
-    # ?while there is still unmapped sources?
-    #   see what source match them
-    #   .. and if a match is found move that part of the source to destination shifted
-    #   else get rid of that portion of the map
-    # then if there is any remaining unmapped source copy it of to the destination
-    #
+    while there is still maps
+    ?while there is still unmapped sources?
+      see what source match them
+      .. and if a match is found move that part of the source to destination shifted
+      else get rid of that portion of the map
+    then if there is any remaining unmapped source copy it of to the destination
+    
+    """
 
     destination = []
     # while source:
@@ -147,23 +137,12 @@ def map_source_ranges_to_destination_ranges(named_map, source_ranges):
 
             # pop source and push to destination
 
-        # if false:      # map start before but leds into source range
-        #     pass
-        # elif false:    # map starts within and ends with source range
-        #     pass
-        # else:          # map starts within but ends outside the source range
-        #     pass
-
-
     # while there is still unmapped sources
     #   see what source match them
     #   .. and if a match is found move that part of the source to destination shifted
     #   else get rid of that portion of the map
     # then if there is any remaining unmapped source copy it of to the destination
     #
-
-def find_overlap():
-    pass
 
 if __name__ == "__main__":
     file = sys.argv[1]

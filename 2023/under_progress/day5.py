@@ -97,15 +97,26 @@ def map_source_ranges_to_destination_ranges(named_map, source):
     #     mapped_destination_range.append( [ mapping[1], mapping[1]+mapping[2] ] )
 
     # while mapped_source_range
-    destination = []
-    while named_map:
-        s2d = named_map.pop(0)
 
-        for range_set in source:
-            #find overlap
-        if 
+    # destination = []
+    # while named_map:
+    #     s2d = named_map.pop(0)
 
-def find_overlap()
+    #     for range_set in source:
+    #         # find overlap
+    #         pass
+    #         # if s2d
+
+    # while there is still maps
+    #   see what source match them
+    #   .. and if a match is found move that part of the source to destination shifted
+    #   else get rid of that portion of the map
+    # then if there is any remaining unmapped source copy it of to the destination
+    #
+
+    
+def find_overlap():
+    pass
 
 if __name__ == "__main__":
     file = sys.argv[1]

@@ -41,19 +41,30 @@ if __name__ == "__main__":
 
     lr_instructions,map = read_document(file)
 
-    nodes = [node for node in map if node.endswith('A')]
+    A_nodes = [node for node in map if node.endswith('A')]
+    Z_nodes = [node for node in map if node.endswith('Z')]
 
-    print(f"{nodes}")
-    import pdb;pdb.set_trace()
+    print(f"{A_nodes}")
+    print(f"{Z_nodes}")
+
+    steps_from_A_to_Z = {anode: {znode:None for znode in Z_nodes} for anode in A_nodes}
     len_inst = len(lr_instructions)
-    inst_indx = 0
-    steps = 0
-    while not all_nodes_endswith_Z(nodes):
-        move_direction = lr_instructions[inst_indx]
-        nodes = [map[node][move_direction] for node in nodes]
-        steps += 1
-        inst_indx +=1
-        if inst_indx == len_inst:
+    for anode in A_nodes:
+        print(f"Starting A Node .. {anode}")
+        for znode in Z_nodes:
+            print(f".. against Z Node .. {znode}")
             inst_indx = 0
+            steps = 0
+            node = anode
+            while node != znode:
+                move_direction = lr_instructions[inst_indx]
+                node = map[node][move_direction]
+                steps += 1
+                inst_indx +=1
+                if inst_indx == len_inst:
+                    inst_indx = 0
+            steps_from_A_to_Z[anode][znode]=steps
+            print(f".. took {steps} steps.")
     
+    import pdb;pdb.set_trace()
     print(f"The number of steps before I'm only on nodes that end with Z is {steps}")

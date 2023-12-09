@@ -1,4 +1,5 @@
 import sys
+import math
 
 def read_document(filename):
     with open(filename,'r') as fh:
@@ -47,11 +48,9 @@ if __name__ == "__main__":
     print(f"{A_nodes}")
     print(f"{Z_nodes}")
 
-    # steps_from_A_to_Z = {anode: {znode:None for znode in Z_nodes} for anode in A_nodes}
-    # steps_from_A_to_Z = {anode: {znode:None for znode in Z_nodes} for anode in A_nodes,
-    #                      visited: {'L': [node for node in map], 'R': [node for node in map]}}
-    steps_from_A_to_Z = {anode: {znode:{'steps': None, 'visited': {'L': [node for node in map], 'R': [node for node in map]}} for znode in Z_nodes} for anode in A_nodes}
     len_inst = len(lr_instructions)
+
+    steps_from_A_to_Z = {anode: {znode:{'steps': None, 'visited': {inst: [] for inst in range(len_inst)}} for znode in Z_nodes} for anode in A_nodes}
     for anode in A_nodes:
         print(f"Starting A Node .. {anode}")
         for znode in Z_nodes:
@@ -61,27 +60,23 @@ if __name__ == "__main__":
             node = anode
             while node != znode:
                 move_direction = lr_instructions[inst_indx]
+
                 # check to see if we have been on this node and move in this direction before
-                try:
-                    found = steps_from_A_to_Z[anode][znode]['visited'][move_direction].index(node)
-                    steps_from_A_to_Z[anode][znode]['visited'][move_direction].pop(found)
-                except ValueError:
+                if node in steps_from_A_to_Z[anode][znode]['visited'][inst_indx]:
                     print('Found loop')
                     steps = None
                     break
-                # # check to see if we have been on this node and move in this direction before
-                # if node in steps_from_A_to_Z[anode][znode][visited][move_direction]:
-                #     # remove node
+                else:
+                    steps_from_A_to_Z[anode][znode]['visited'][inst_indx].append(node)
 
-                # else:
-                #     break                
                 node = map[node][move_direction]
                 steps += 1
                 inst_indx +=1
                 if inst_indx == len_inst:
                     inst_indx = 0
-            steps_from_A_to_Z[anode][znode]=steps
+            steps_from_A_to_Z[anode][znode]['visited']['steps']=steps
             print(f".. took {steps} steps.")
-    
-    import pdb;pdb.set_trace()
-    print(f"The number of steps before I'm only on nodes that end with Z is {steps}")
+
+    nonzero_steps = [steps_from_A_to_Z[anode][znode]['visited']['steps'] for anode in A_nodes for znode in Z_nodes if steps_from_A_to_Z[anode][znode]['visited']['steps']]
+    mininum_steps = math.lcm(*nonzero_steps)
+    print(f"The number of steps before I'm only on nodes that end with Z is {mininum_steps}")

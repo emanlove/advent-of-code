@@ -47,7 +47,10 @@ if __name__ == "__main__":
     print(f"{A_nodes}")
     print(f"{Z_nodes}")
 
-    steps_from_A_to_Z = {anode: {znode:None for znode in Z_nodes} for anode in A_nodes}
+    # steps_from_A_to_Z = {anode: {znode:None for znode in Z_nodes} for anode in A_nodes}
+    # steps_from_A_to_Z = {anode: {znode:None for znode in Z_nodes} for anode in A_nodes,
+    #                      visited: {'L': [node for node in map], 'R': [node for node in map]}}
+    steps_from_A_to_Z = {anode: {znode:{'steps': None, 'visited': {'L': [node for node in map], 'R': [node for node in map]}} for znode in Z_nodes} for anode in A_nodes}
     len_inst = len(lr_instructions)
     for anode in A_nodes:
         print(f"Starting A Node .. {anode}")
@@ -58,6 +61,20 @@ if __name__ == "__main__":
             node = anode
             while node != znode:
                 move_direction = lr_instructions[inst_indx]
+                # check to see if we have been on this node and move in this direction before
+                try:
+                    found = steps_from_A_to_Z[anode][znode]['visited'][move_direction].index(node)
+                    steps_from_A_to_Z[anode][znode]['visited'][move_direction].pop(found)
+                except ValueError:
+                    print('Found loop')
+                    steps = None
+                    break
+                # # check to see if we have been on this node and move in this direction before
+                # if node in steps_from_A_to_Z[anode][znode][visited][move_direction]:
+                #     # remove node
+
+                # else:
+                #     break                
                 node = map[node][move_direction]
                 steps += 1
                 inst_indx +=1

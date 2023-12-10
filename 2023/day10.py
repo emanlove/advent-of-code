@@ -54,18 +54,40 @@ def read_pipes(filename):
     farthest_steps = len(path)//2
     print(f"The number of steps farthest from the starting position is {farthest_steps}")
 
+
+    """
+    There is three states: 'outside', 'on path', and 'inside'. Also with the paths one
+    could be crossing over a path or simply following along a path. So there is a
+    difference between the following
+
+        ..||..
+
+    and
+    
+        ..|L..
+
+    Actually it might be more like, as we are validating left to right whether or not
+    the tile we are examining ends in the right (and left?) direction.
+
+    Checking left to right would a transition from outside to inside only happen
+    across | barriers?
+    """
     num_inside_tiles = 0
     for row,line in enumerate(lines):
+        tiles=[]
         inside = False
         for col,tile in enumerate(line):
             abs_pos = col + (row*nCols)
-            if abs_pos in path:
+            if abs_pos in path and flattened_map[abs_pos]=='|':
                 # toggle outside/inside
                 inside = True if not inside else False
+                tiles.append(flattened_map[abs_pos])
                 # continue
             elif inside and flattened_map[abs_pos]=='.':
+                tiles.append('I')
                 num_inside_tiles +=1
-
+        print(tiles)
+        
     print(f"The number of tiles are enclosed by the loop is {num_inside_tiles}")
 
 def find_pipes_leading_out_start(map, this, nCols):

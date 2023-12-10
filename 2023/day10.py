@@ -9,10 +9,10 @@ F is a 90-degree bend connecting south and east.
 import sys
 
 # LEADING_NORTH = ['|', '7', '']
-LEADING_NORTH = {'7':-1, '|':0, 'F':1}
-LEADING_EAST  = {'L':-1, '-':0, 'F':1}
-LEADING_WEST  = {'J':-1, '-':0, '7':1}
-LEADING_SOUTH = {'J':-1, '|':0, 'L':1}
+LEADING_NORTH = {'7':-1, '|':0, 'F':1, 'S':0}
+LEADING_EAST  = {'L':-1, '-':0, 'F':1, 'S':0}
+LEADING_WEST  = {'J':-1, '-':0, '7':1, 'S':0}
+LEADING_SOUTH = {'J':-1, '|':0, 'L':1, 'S':0}
 
 def read_pipes(filename):
     with open(filename,'r') as fh:
@@ -42,7 +42,8 @@ def read_pipes(filename):
         path.append(next)
     
     import pdb;pdb.set_trace()
-    print(f"The number of steps farthest from the starting position is ")
+    farthest_steps = len(path)//2 + len(path)%2
+    print(f"The number of steps farthest from the starting position is {farthest_steps}")
 
 def get_connecting_pipes(map, this, nCols):
     connections = []
@@ -52,6 +53,9 @@ def get_connecting_pipes(map, this, nCols):
     north = map[north_pos]
     if north in LEADING_NORTH:
         connections.append(north_pos+LEADING_NORTH[north])
+    # elif north == 'S':
+    #     connections.append(north_pos)
+
 
     # Check East
     east_pos = this-1

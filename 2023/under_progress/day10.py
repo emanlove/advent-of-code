@@ -71,6 +71,8 @@ def read_pipes(filename):
 
     Checking left to right would a transition from outside to inside only happen
     across | barriers?
+
+    reading left-to-right, a `|` will change "inside" state while a "F" and "L"
     """
     num_inside_tiles = 0
     for row,line in enumerate(lines):
@@ -87,7 +89,7 @@ def read_pipes(filename):
                 tiles.append('I')
                 num_inside_tiles +=1
         print(tiles)
-        
+
     print(f"The number of tiles are enclosed by the loop is {num_inside_tiles}")
 
 def find_pipes_leading_out_start(map, this, nCols):

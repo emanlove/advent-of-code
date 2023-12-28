@@ -45,6 +45,8 @@ def read_skydata(filename,scale):
           f" in a scale of {scale} is {sum(distances)}")
 
 def shift_by(empties, indx, scale):
+    if scale > 1:
+        scale -= 1
     return sum([1 for e in empties if indx > e])*scale
 
 if __name__ == "__main__":

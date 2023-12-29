@@ -41,3 +41,45 @@ if __name__ == "__main__":
         total_weight += beam_weight
 
     print(f"The total load on the north support beams is {total_weight}")
+
+def read_titling_platform(filename):
+    with open(filename,'r') as fh:
+        lines = [line.rstrip('\n') for line in fh]
+    
+    nrows = len(lines); ncols = len(lines[0])
+    flattened = ''.join(lines)
+
+    # round = [indx for indx,char in enumerate(flattened) if char=='O']
+    round = [(indx//ncols,indx%ncols) for indx,char in enumerate(flattened) if char=='O']
+    # square = [indx for indx,char in enumerate(flattened) if char=='#']
+    square = [(indx//ncols,indx%ncols) for indx,char in enumerate(flattened) if char=='#']
+
+    square += [ends for c in range(ncols) for ends in ((-1,c),(nrows,c)) ]
+    square += [ends for r in range(nrows) for ends in ((r,-1),(r,ncols)) ]
+
+    return square, round
+
+def tilt(square, round, tilt):
+    new = []
+    sindx = 0
+    while round:
+        start = square[sindx]; stop = square[sindx+1]
+        # if two square rocks right next to each other
+        # Possible To Do: if number of rocks is equal to the space skip check to see if in??
+        if stop-start == 1:
+            sindx +=1
+            continue
+        count = 0
+        for rindex,r in enumerate(round):
+            if start<r<stop:
+                r.pop(rindx)
+                count += 1
+        if count:
+            new.append(range())
+    return new
+
+
+if __name__ == "__main__":
+    file = sys.argv[1]
+
+    sqr_rocks,rnd_rocks = read_titling_platform(file)

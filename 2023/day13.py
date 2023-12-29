@@ -20,7 +20,7 @@ def read_patterns(filename):
 def find_reflectionPoint_and_score(pattern):
     reflection_indexes = []
     for lindx,line in enumerate(pattern[:-1]):
-        if line == pattern[lindx+1]:
+        if line == pattern[lindx+1] or has_one_difference(line,pattern[lindx+1]):
             reflection_indexes.append(lindx)
     
     if len(reflection_indexes)==0:
@@ -56,6 +56,14 @@ def check_reflection(pattern, index):
                 return None
         return dist_to_start
 
+def has_one_difference(this,that):
+    chars = zip(this,that)
+    num_of_differences = sum([1 for c in chars if c[0]!=c[1]])
+    if num_of_differences == 1:
+        return True
+    else:
+        return False
+
 def check_reflection_noting_num_of_diffs(pattern, index):
         reflection_index = index
         dist_to_start = reflection_index+1
@@ -68,6 +76,7 @@ def check_reflection_noting_num_of_diffs(pattern, index):
             if pattern[this] != pattern[that]:
                 chars = zip(pattern[this],pattern[that])
                 num_of_differences += sum([1 for c in chars if c[0]!=c[1]])
+        # print(f"{dist_to_start}  diffs:{num_of_differences}")
         return dist_to_start, num_of_differences
 
 def transform(pattern):

@@ -30,9 +30,17 @@ def find_reflectionPoint_and_score(pattern):
     # if len(reflection_indexes)>1:
     #     print(f"Warning Local reflection; {reflection_indexes}")
 
+    # Part 1 solution:
+    # for index in reflection_indexes:
+    #     reflect_index = check_reflection(pattern, index)
+    #     if reflect_index is not None:
+    #         return reflect_index
+    # return None
+
+    # Part 2 solution:
     for index in reflection_indexes:
-        reflect_index = check_reflection(pattern, index)
-        if reflect_index is not None:
+        reflect_index,ndiffs = check_reflection_noting_num_of_diffs(pattern, index)
+        if ndiffs == 1:
             return reflect_index
     return None
 
@@ -47,6 +55,20 @@ def check_reflection(pattern, index):
             if pattern[this] != pattern[that]:
                 return None
         return dist_to_start
+
+def check_reflection_noting_num_of_diffs(pattern, index):
+        reflection_index = index
+        dist_to_start = reflection_index+1
+        dist_to_end = len(pattern)-dist_to_start
+        reflect_length = dist_to_end if dist_to_start > dist_to_end else dist_to_start
+        # print(f"{len(pattern)}  {dist_to_start}  {dist_to_end}")
+        num_of_differences = 0
+        for rindx in range(reflect_length):
+            this = reflection_index-rindx; that = reflection_index+rindx+1
+            if pattern[this] != pattern[that]:
+                chars = zip(pattern[this],pattern[that])
+                num_of_differences += sum([1 for c in chars if c[0]!=c[1]])
+        return dist_to_start, num_of_differences
 
 def transform(pattern):
     vertical = []

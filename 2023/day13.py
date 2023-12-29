@@ -23,20 +23,30 @@ def find_reflectionPoint_and_score(pattern):
         if line == pattern[lindx+1]:
             reflection_indexes.append(lindx)
     
-    if len(reflection_indexes)>1:
-        print(f"Warning Local reflection; {reflection_indexes}")
+    if len(reflection_indexes)==0:
+        # No reflection
+        return None
+    
+    # if len(reflection_indexes)>1:
+    #     print(f"Warning Local reflection; {reflection_indexes}")
 
-    # right now assuming we have singluar reflection point
-    reflection_index = reflection_indexes[0]
-    dist_to_start = reflection_index+1
-    dist_to_end = len(pattern)-dist_to_start
-    reflect_length = dist_to_end if dist_to_start > dist_to_end else dist_to_start
-    # print(f"{len(pattern)}  {dist_to_start}  {dist_to_end}")
-    for rindx in range(reflect_length):
-        this = reflection_index-rindx; that = reflection_index+rindx+1
-        if pattern[this] != pattern[that]:
-            return None
-    return dist_to_start
+    for index in reflection_indexes:
+        reflect_index = check_reflection(pattern, index)
+        if reflect_index is not None:
+            return reflect_index
+    return None
+
+def check_reflection(pattern, index):
+        reflection_index = index
+        dist_to_start = reflection_index+1
+        dist_to_end = len(pattern)-dist_to_start
+        reflect_length = dist_to_end if dist_to_start > dist_to_end else dist_to_start
+        # print(f"{len(pattern)}  {dist_to_start}  {dist_to_end}")
+        for rindx in range(reflect_length):
+            this = reflection_index-rindx; that = reflection_index+rindx+1
+            if pattern[this] != pattern[that]:
+                return None
+        return dist_to_start
 
 def transform(pattern):
     vertical = []
@@ -61,7 +71,8 @@ if __name__ == "__main__":
             vertical_reflect = transform(pattern)
             score = find_reflectionPoint_and_score(vertical_reflect)
             if score is None:
-                printf("WARNING: Pattern has neither horizontal nor vertical reflection!")
-            scores.append(score)
+                print("WARNING: Pattern has neither horizontal nor vertical reflection!")
+            else:
+                scores.append(score)
 
     print(f"The number do you get after summarizing all of your notes is {sum(scores)}")

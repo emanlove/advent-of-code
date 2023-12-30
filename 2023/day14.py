@@ -54,10 +54,60 @@ def read_titling_platform(filename):
     # square = [indx for indx,char in enumerate(flattened) if char=='#']
     square = [(indx//ncols,indx%ncols) for indx,char in enumerate(flattened) if char=='#']
 
+    square_rows = {}
+    square_cols = {}
+    for indx,char in enumerate(flattened):
+        if char=='#':
+            row = indx//ncols
+            col = indx%ncols
+            if row not in square_rows:
+                square_rows[row]['ascending'] = [-1, ncols]
+            if col not in square_cols:
+                square_cols[col]['ascending'] = [-1, nrows]
+            square_rows[row].append(col)
+            square_cols[col].append(row)
+    for r in square_rows:
+        square_rows[r]['ascending']=sorted(square_rows[r]['ascending'])
+        square_rows[r]['decending']=sorted(square_rows[r]['decending'],reverse=True)
+    for c in square_cols:
+        square_cols[c]['ascending']=sorted(square_cols[c]['ascending'])
+        square_cols[c]['decending']=sorted(square_cols[c]['decending'],reverse=True)
+            
+    square_rows = {indx//ncols: }
     square += [ends for c in range(ncols) for ends in ((-1,c),(nrows,c)) ]
     square += [ends for r in range(nrows) for ends in ((r,-1),(r,ncols)) ]
 
     return square, round
+
+def shift(square, round, direction='ascending'):
+    shifted = []
+    sindx = 0
+    while round:
+        start = square[sindx]; stop = square[sindx+1]
+        # if two square rocks right next to each other
+        if stop-start == 1:
+            sindx +=1
+            continue
+        
+        count = 0
+        for rindex,r in enumerate(round):
+            if start<r<stop:
+                round.pop(rindx)
+                count += 1
+        if count:
+            offset = +1 if direction='ascending' else -1
+            shifted.append(range(start+offset,start+offset+(count*offset),offset))
+    return shifted
+
+def tilt_and_shift():
+    pass
+
+def cycle():
+    # tilt North
+    for col in range(nCols):
+        col_rocks
+        for
+
 
 def tilt(square, round, tilt):
     new = []

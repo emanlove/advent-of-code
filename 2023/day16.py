@@ -12,6 +12,8 @@ RIGHT = 'right'
 UP    = 'up'
 DOWN  = 'down'
 BEAMS = 'beams'
+NCOLS = None
+NROWS = None
 
 def read_contraption (filename):
     with open(filename,'r') as fh:
@@ -21,6 +23,8 @@ def read_contraption (filename):
 
     ncols = len(lines[0])
     nrows = len(lines)
+    NCOLS = len(lines[0])
+    NROWS = len(lines)
 
     reflectors = {}
     for coord,tile in enumerate(flattened):
@@ -36,30 +40,39 @@ def read_contraption (filename):
 
 def find_next_reflector(reflectors, pos, heading):
     match heading:
-        case LEFT:
-            pass
-            # path = []  # indices of points to the left
-            # ignore = ['-']
-        case RIGHT:
-            pass
-            # path = []  # indices of points to the right
-            # ignore = ['-']
-        case UP:
-            pass
-            # path = []  # indices of points upward
-            # ignore = ['|']
-        case DOWN:
-            pass
-            # path = []  # indices of points downward
-            # ignore = ['|']
+        case "left":
+            # indices of points to the left
+            # range(pos, beginning of this row-1, -1)
+            # range(pos-1, (pos//NCOLS)*NCOLS)-1, -1)
+            path = range(pos-1, ((pos//NCOLS)*NCOLS)-1, -1)
+            ignore = ['-']
+        case "right":
+            # indices of points to the right
+            # range(pos+1, (pos//NCOLS+1)*NCOLS), +1)
+            path = range(pos+1, (pos//NCOLS+1)*NCOLS, +1)  # indices of points to the right
+            ignore = ['-']
+        case "up":
+            # indices of points upward
+            # range(row above, 0, -num of cols)
+            # range(pos-NCOLS, 0, -NCOLS)
+            path = range(pos-NCOLS, 0, -NCOLS)  # indices of points upward
+            ignore = ['|']
+        case "down":
+            # indices of points downward
+            # range(row below, num of cols, +num of cols)
+            # range(pos+NCOLS, NCOLS, +NCOLS)
+            path = range(pos+NCOLS, NCOLS, +NCOLS)  # indices of points downward
+            ignore = ['|']
 
     for indx,step in enumerate(path):
         if (step in reflectors) and reflectors[step][type] not in ignore:
             traversed = path[:indx+1]
             next_reflector = step
+            # ?? remove beam from reflector (conditional based upon pos in reflector - needed for initial start)
             return next_reflector, traversed  # return next reflector or None if not one AND the tiles traversed            
     traversed = path
     next_reflector = None
+    # ?? remove beam from reflector (conditional based upon pos in reflector - needed for initial start)
     return next_reflector, traversed  # return next reflector or None if not one AND the tiles traversed
 
 def reflect_beam(reflectors, pos, coming_from):
@@ -68,39 +81,45 @@ def reflect_beam(reflectors, pos, coming_from):
     match type:
         case '|':
             match coming_from:
-                case LEFT:
-                    pass
-                case RIGHT:
+                case "left" | "right":
+                    # split up and down
                     pass
                 case _:
-                    print(f"!!WARNING!! Should not be approching | ({pos} from {coming_from}")
+                    print(f"!!WARNING!! Should not be approching | ({pos}) from {coming_from}")
         case '-':
             match coming_from:
-                case UP:
-                    pass
-                case DOWN:
+                case "up" | "down":
+                    # split left and right
                     pass
                 case _:
-                    print(f"!!WARNING!! Should not be approching - ({pos} from {coming_from}")
+                    print(f"!!WARNING!! Should not be approching - ({pos}) from {coming_from}")
         case '\':
             match coming_from:
-                case LEFT:
+                case "left":
+                    # reflect up
                     pass
-                case RIGHT:
+                case "right":
+                    # reflect down
                     pass
-                case UP:
+                case "up":
+                    # reflect left
                     pass
-                case DOWN:
+                case "down":
+                    # reflect right
                     pass
         case '/':
             match coming_from:
-                case LEFT:
+                case "left":
+                    # reflect up
                     pass
-                case RIGHT:
+                case "right":
+                    # reflect down
                     pass
-                case UP:
+                case "up":
+                    # reflect right
                     pass
-                case DOWN:
+                case "down":
+                    # reflect left
                     pass
 
     # ?? How and when/where do we remove a beam 
@@ -113,7 +132,7 @@ def shine_light(reflectors):
     reflect_beam()
 
     # while any beams
-    while any(reflectors[pnt][beams] for pnt in reflectors):
+    while any(reflectors[pnt][BEAMS] for pnt in reflectors):
         pass
 
     # count up number of tiles

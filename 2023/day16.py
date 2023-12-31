@@ -99,39 +99,39 @@ class Contraption():
             reflectors[indx][BEAMS].pop(beam_indx)
 
 
-    def reflect_beam(self, pos, coming_from):
+    def reflect_beam(self, pos, heading_towards):
         reflectors = self.reflectors
 
         # if beam coming into this reflector has arrived from same direction before
         # then don't reflect back out (as this would be looping the light)
-        if reflectors[pos][coming_from]:
-            print(f"Found repeated beam: {pos}  {coming_from}")
+        if reflectors[pos][heading_towards]:
+            print(f"Found repeated beam: {pos}  {heading_towards}")
             return
 
         # note incoming beam so we don't repeat in future
-        self.record_beam(pos, coming_from)
+        self.record_beam(pos, heading_towards)
 
         type = reflectors[pos][TYPE]
-        print(f"Reflecting beam at {pos} heading towards {coming_from} with {type}..")
+        print(f"Reflecting beam at {pos} heading towards {heading_towards} with {type}..")
         match type:
             case '|':
-                match coming_from:
+                match heading_towards:
                     case "left" | "right":
                         # split up and down
                         self.add_beam(pos, UP)
                         self.add_beam(pos, DOWN)
                     case _:
-                        print(f"!!WARNING!! Should not be approching | ({pos}) from {coming_from}")
+                        print(f"!!WARNING!! Should not be approching | ({pos}) from {heading_towards}")
             case '-':
-                match coming_from:
+                match heading_towards:
                     case "up" | "down":
                         # split left and right
                         self.add_beam(pos, LEFT)
                         self.add_beam(pos, RIGHT)
                     case _:
-                        print(f"!!WARNING!! Should not be approching - ({pos}) from {coming_from}")
+                        print(f"!!WARNING!! Should not be approching - ({pos}) from {heading_towards}")
             case '\\':
-                match coming_from:
+                match heading_towards:
                     case "left":
                         # reflect up
                         self.add_beam(pos, UP)
@@ -145,13 +145,13 @@ class Contraption():
                         # reflect right
                         self.add_beam(pos, RIGHT)
             case '/':
-                match coming_from:
+                match heading_towards:
                     case "left":
-                        # reflect up
-                        self.add_beam(pos, UP)
-                    case "right":
                         # reflect down
                         self.add_beam(pos, DOWN)
+                    case "right":
+                        # reflect up
+                        self.add_beam(pos, UP)
                     case "up":
                         # reflect right
                         self.add_beam(pos, RIGHT)

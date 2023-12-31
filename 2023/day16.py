@@ -34,6 +34,42 @@ class Contraption():
                 self.reflectors[coord][BEAMS] = []
 
     def find_next_reflector(self, pos, heading):
+        """ Find the next reflector along a path
+        
+            Starting at `pos` and traveling in the direction of `heading` look
+            for any reflectors that should not be ignored. That is, ignored reflectors
+            are those splitters approached from the "pointy ends".
+
+            As our map is flattened the travering in a path or along a row or column
+            is a bit more complicated then just increasing or decreasing the current
+            row and column. Instead if we are heading left then we want to generate a
+            path heading towards the beginning of a row. We start at the tile to our
+            left or current position minus one. Our step increment is minis one as we
+            are traversing down the flattened grid. The end of path or start of the
+            row is calculated as the floor division of position by number of columns.
+            Remembering that range is up to but not including we want to subtract one
+            from the start of the row. So for the path to the left we have
+
+                path = range(pos-1, ((pos//ncols)*ncols)-1, -1)     # left
+
+            For paths heading right we step plus one and start to the tile to the right.
+            The end of the row plus one (or end of the path right) is floor division of
+            position by number of cols plus one and times the number of cols. Thus,
+
+                path = range(pos+1, (pos//ncols+1)*ncols, +1)       # right
+
+            For up and down we start with and step by minus or plus the number of
+            columns, respectively. For up, the end of path is the current column minus
+            the number of columns.  (Remember for range we want to extend the end out
+            beyond the first row thus the minus number of columns). With down the end
+            of path is the total number of coordinates plus the current column. We have
+            then,
+
+                path = range(pos-ncols, (pos%ncols)-ncols, -ncols)  # up
+
+                path = range(pos+ncols, (nrows*ncols)+(pos%ncols), +ncols)  # down
+
+        """
         reflectors = self.reflectors
         ncols = self.ncols
         nrows = self.nrows
@@ -57,9 +93,13 @@ class Contraption():
                 # range(row above, 0, -num of cols)
                 # range(pos-NCOLS, 0, -NCOLS)
                 # ---------------------------
+                # !! - incorrect !!
                 # range(row above, col in first row, -num of cols)
                 # range(pos-NCOLS, pos%NCOLS, -NCOLS)
-                path = range(pos-ncols, pos%ncols, -ncols)  # indices of points upward
+                # ---------------------------
+                # range(row above, col in first row minus num of cols, -num of cols)
+                # range(pos-NCOLS, pos%NCOLS-NCOLS, -NCOLS)
+                path = range(pos-ncols, (pos%ncols)-ncols, -ncols)  # indices of points upward
                 ignore = ['|']
             case "down":
                 # indices of points downward
@@ -67,9 +107,15 @@ class Contraption():
                 # range(row below, num of rows, +num of cols)
                 # range(pos+NCOLS, NROWS, +NCOLS)
                 # ---------------------------
+                # !! - incorrect !!
                 # range(row below, col in last row, +num of cols)
                 # range(pos+NCOLS, ((nrows-1)*ncols)+pos%NCOLS, +NCOLS)
-                path = range(pos+ncols, ((nrows-1)*ncols)+(pos%ncols), +ncols)  # indices of points downward
+                # ---------------------------
+                # range(row below, col in last row plus num of cols, +num of cols)
+                #                          or
+                # range(row below, number of coords plus current col, +num of cols)
+                # range(pos+NCOLS, ((nrows)*ncols)+pos%NCOLS, +NCOLS)
+                path = range(pos+ncols, (nrows*ncols)+(pos%ncols), +ncols)  # indices of points downward
                 ignore = ['|']
 
         print(f".. searching path {path}/{list(path)} and ignoring {ignore}")

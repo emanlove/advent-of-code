@@ -37,7 +37,7 @@ class Contraption():
         reflectors = self.reflectors
         ncols = self.ncols
         nrows = self.nrows
-
+        
         match heading:
             case "left":
                 # indices of points to the left
@@ -64,7 +64,7 @@ class Contraption():
                 ignore = ['|']
 
         for indx,step in enumerate(path):
-            if (step in reflectors) and reflectors[step][type] not in ignore:
+            if (step in reflectors) and reflectors[step][TYPE] not in ignore:
                 traversed = path[:indx+1]
                 next_reflector = step
                 self.remove_beam_from_reflector(pos, heading)
@@ -117,7 +117,7 @@ class Contraption():
                         self.add_beam(pos, RIGHT)
                     case _:
                         print(f"!!WARNING!! Should not be approching - ({pos}) from {coming_from}")
-            case '\':
+            case '\\':
                 match coming_from:
                     case "left":
                         # reflect up
@@ -171,7 +171,7 @@ class Contraption():
         next_reflector, tiles_traversed = self.find_next_reflector(0, RIGHT)
         self.all_tiles_energized.append(tiles_traversed)
         if next_reflector:
-            reflect_beam(next_reflector, RIGHT)
+            self.reflect_beam(next_reflector, RIGHT)
 
         # while any beams
         while any(reflectors[pnt][BEAMS] for pnt in reflectors):
@@ -180,7 +180,7 @@ class Contraption():
                     next_reflector, tiles_traversed = self.find_next_reflector(reflector, heading)
                     self.all_tiles_energized.append(tiles_traversed)
                     if next_reflector:
-                        reflect_beam(next_reflector, heading)
+                        self.reflect_beam(next_reflector, heading)
 
         # count up number of tiles
         tiles_energized = len(set(self.all_tiles_energized))

@@ -1,11 +1,17 @@
 import sys
 
-type  = 'type'
-left  = 'left'
-right = 'right'
-up    = 'up'
-down  = 'down'
-beams = 'beams'
+# type  = 'type'
+# left  = 'left'
+# right = 'right'
+# up    = 'up'
+# down  = 'down'
+# beams = 'beams'
+TYPE  = 'type'
+LEFT  = 'left'
+RIGHT = 'right'
+UP    = 'up'
+DOWN  = 'down'
+BEAMS = 'beams'
 
 def read_contraption (filename):
     with open(filename,'r') as fh:
@@ -20,46 +26,91 @@ def read_contraption (filename):
     for coord,tile in enumerate(flattened):
         if tile != '.':
             reflectors[coord] = {}
-            reflectors[coord][type] = tile
-            reflectors[coord][left] = False
-            reflectors[coord][right] = False
-            reflectors[coord][up] = False
-            reflectors[coord][down] = False
-            reflectors[coord][beams] = []
+            reflectors[coord][TYPE] = tile
+            reflectors[coord][LEFT] = False
+            reflectors[coord][RIGHT] = False
+            reflectors[coord][UP] = False
+            reflectors[coord][DOWN] = False
+            reflectors[coord][BEAMS] = []
     return reflectors
 
 def find_next_reflector(reflectors, pos, heading):
     match heading:
-        case [left]:
+        case LEFT:
             pass
             # path = []  # indices of points to the left
             # ignore = ['-']
-        case [right]:
+        case RIGHT:
             pass
             # path = []  # indices of points to the right
             # ignore = ['-']
-        case [up]:
+        case UP:
             pass
             # path = []  # indices of points upward
             # ignore = ['|']
-        case [down]:
+        case DOWN:
             pass
             # path = []  # indices of points downward
             # ignore = ['|']
 
-    for step in path:
+    for indx,step in enumerate(path):
         if (step in reflectors) and reflectors[step][type] not in ignore:
-            traversed = ...
+            traversed = path[:indx+1]
             next_reflector = step
             return next_reflector, traversed  # return next reflector or None if not one AND the tiles traversed            
     traversed = path
     next_reflector = None
     return next_reflector, traversed  # return next reflector or None if not one AND the tiles traversed
 
+def reflect_beam(reflectors, pos, coming_from):
+    type = reflectors[pos][TYPE]
+
+    match type:
+        case '|':
+            match coming_from:
+                case LEFT:
+                    pass
+                case RIGHT:
+                    pass
+                case _:
+                    print(f"!!WARNING!! Should not be approching | ({pos} from {coming_from}")
+        case '-':
+            match coming_from:
+                case UP:
+                    pass
+                case DOWN:
+                    pass
+                case _:
+                    print(f"!!WARNING!! Should not be approching - ({pos} from {coming_from}")
+        case '\':
+            match coming_from:
+                case LEFT:
+                    pass
+                case RIGHT:
+                    pass
+                case UP:
+                    pass
+                case DOWN:
+                    pass
+        case '/':
+            match coming_from:
+                case LEFT:
+                    pass
+                case RIGHT:
+                    pass
+                case UP:
+                    pass
+                case DOWN:
+                    pass
+
+    # ?? How and when/where do we remove a beam 
+
 def shine_light(reflectors):
 
     # trace to initial reflector
-    path = range(ncols)
+    # path = range(ncols)
+    find_next_reflector(0,RIGHT)
+    reflect_beam()
 
     # while any beams
     while any(reflectors[pnt][beams] for pnt in reflectors):

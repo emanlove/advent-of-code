@@ -84,7 +84,7 @@ class Contraption():
         reflectors = self.reflectors
 
         if indx in reflectors:
-            beam_indx = reflectors[indx][BEAMS].find(heading)
+            beam_indx = reflectors[indx][BEAMS].index(heading)
             reflectors[indx][BEAMS].pop(beam_indx)
 
 
@@ -175,9 +175,9 @@ class Contraption():
 
         # while any beams
         while any(reflectors[pnt][BEAMS] for pnt in reflectors):
-            for reflector in reflectors:
-                for heading in reflector[BEAMS]:
-                    next_reflector, tiles_traversed = self.find_next_reflector(reflector, heading)
+            for rindx in reflectors:
+                for heading in reflectors[rindx][BEAMS]:
+                    next_reflector, tiles_traversed = self.find_next_reflector(rindx, heading)
                     self.all_tiles_energized.append(tiles_traversed)
                     if next_reflector:
                         self.reflect_beam(next_reflector, heading)

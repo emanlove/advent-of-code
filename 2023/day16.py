@@ -69,15 +69,26 @@ def find_next_reflector(reflectors, pos, heading):
             traversed = path[:indx+1]
             next_reflector = step
             # ?? remove beam from reflector (conditional based upon pos in reflector - needed for initial start)
+            # remove beam from reflector
+            if pos in reflectors:
+                beam_indx = reflectors[pos][BEAMS].find(heading)
+                reflectors[pos][BEAMS].pop(beam_indx)
             return next_reflector, traversed  # return next reflector or None if not one AND the tiles traversed            
     traversed = path
     next_reflector = None
     # ?? remove beam from reflector (conditional based upon pos in reflector - needed for initial start)
+    # remove beam from reflector
+    if pos in reflectors:
+        beam_indx = reflectors[pos][BEAMS].find(heading)
+        reflectors[pos][BEAMS].pop(beam_indx)
     return next_reflector, traversed  # return next reflector or None if not one AND the tiles traversed
 
 def reflect_beam(reflectors, pos, coming_from):
     type = reflectors[pos][TYPE]
 
+    # if beam coming into this reflector has arrived from same direction before
+    # then don't reflect back out (as this would be looping the light)
+    
     match type:
         case '|':
             match coming_from:
@@ -126,10 +137,12 @@ def reflect_beam(reflectors, pos, coming_from):
 
 def shine_light(reflectors):
 
+    all_tiles_energized = [0]
+
     # trace to initial reflector
-    # path = range(ncols)
-    find_next_reflector(0,RIGHT)
-    reflect_beam()
+    next_reflector, tiles_traversed = find_next_reflector(reflectors, 0,RIGHT)
+    all_tiles_energized.append(tiles_traversed)
+    reflect_beam(reflectors, next_reflector, RIGHT)
 
     # while any beams
     while any(reflectors[pnt][BEAMS] for pnt in reflectors):

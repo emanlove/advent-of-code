@@ -38,6 +38,7 @@ class Contraption():
         ncols = self.ncols
         nrows = self.nrows
         
+        print(f"Looking from {pos} heading {heading}..")
         match heading:
             case "left":
                 # indices of points to the left
@@ -52,17 +53,26 @@ class Contraption():
                 ignore = ['-']
             case "up":
                 # indices of points upward
+                # !! - incorrect !!
                 # range(row above, 0, -num of cols)
                 # range(pos-NCOLS, 0, -NCOLS)
-                path = range(pos-ncols, 0, -ncols)  # indices of points upward
+                # ---------------------------
+                # range(row above, col in first row, -num of cols)
+                # range(pos-NCOLS, pos%NCOLS, -NCOLS)
+                path = range(pos-ncols, pos%ncols, -ncols)  # indices of points upward
                 ignore = ['|']
             case "down":
                 # indices of points downward
+                # !! - incorrect !!
                 # range(row below, num of rows, +num of cols)
                 # range(pos+NCOLS, NROWS, +NCOLS)
-                path = range(pos+ncols, nrows, +ncols)  # indices of points downward
+                # ---------------------------
+                # range(row below, col in last row, +num of cols)
+                # range(pos+NCOLS, ((nrows-1)*ncols)+pos%NCOLS, +NCOLS)
+                path = range(pos+ncols, ((nrows-1)*ncols)+(pos%ncols), +ncols)  # indices of points downward
                 ignore = ['|']
 
+        print(f".. searching path {path}/{list(path)} and ignoring {ignore}")
         for indx,step in enumerate(path):
             if (step in reflectors) and reflectors[step][TYPE] not in ignore:
                 traversed = path[:indx+1]
@@ -70,6 +80,7 @@ class Contraption():
                 self.remove_beam_from_reflector(pos, heading)
 
                 # return next reflector
+                print(f".. found next reflector. {next_reflector}  {reflectors[next_reflector][TYPE]}")
                 return next_reflector, traversed
 
         # return next reflector as None since there is not one
@@ -94,12 +105,14 @@ class Contraption():
         # if beam coming into this reflector has arrived from same direction before
         # then don't reflect back out (as this would be looping the light)
         if reflectors[pos][coming_from]:
+            print(f"Found repeated beam: {pos}  {coming_from}")
             return
 
         # note incoming beam so we don't repeat in future
         self.record_beam(pos, coming_from)
 
         type = reflectors[pos][TYPE]
+        print(f"Reflecting beam at {pos} heading towards {coming_from} with {type}..")
         match type:
             case '|':
                 match coming_from:

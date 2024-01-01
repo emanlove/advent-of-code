@@ -37,13 +37,17 @@ class Contraption():
         for rindx in self.reflectors:
             self.next_reflector_beams[rindx] = []
 
-    def find_next_reflector(self, pos, heading):
+    def find_next_reflector(self, pos, heading, initial=False):
         """ Find the next reflector along a path
         
             Starting at `pos` and traveling in the direction of `heading` look
             for any reflectors that should not be ignored. That is, ignored reflectors
-            are those splitters approached from the "pointy ends".
+            are those splitters approached from the "pointy ends". If `initial` is True
+            then instead of starting at the next tile, the path starts on the tile
+            provided in `pos`. Note this method does not check that if `initial` is true
+            that `pos` is an edge tile. It just will do what you ask.
 
+            About the paths:
             As our map is flattened the travering in a path or along a row or column
             is a bit more complicated then just increasing or decreasing the current
             row and column. Instead if we are heading left then we want to generate a
@@ -81,22 +85,23 @@ class Contraption():
         match heading:
             case "left":
                 # indices of points to the left
-                path = range(pos-1, ((pos//ncols)*ncols)-1, -1)
+                start = pos if initial else pos-1
+                path = range(start, ((pos//ncols)*ncols)-1, -1)
                 ignore = ['-']
             case "right":
                 # indices of points to the right
-                if pos == -1:
-                    path = range(0, ncols, +1)
-                else:
-                    path = range(pos+1, (pos//ncols+1)*ncols, +1)
+                start = pos if initial else pos+1
+                path = range(start, (pos//ncols+1)*ncols, +1)
                 ignore = ['-']
             case "up":
                 # indices of points upward
-                path = range(pos-ncols, (pos%ncols)-ncols, -ncols)
+                start = pos if initial else pos-ncols
+                path = range(start, (pos%ncols)-ncols, -ncols)
                 ignore = ['|']
             case "down":
                 # indices of points downward
-                path = range(pos+ncols, (nrows*ncols)+(pos%ncols), +ncols)
+                start = pos if initial else pos+ncols
+                path = range(start, (nrows*ncols)+(pos%ncols), +ncols)
                 ignore = ['|']
 
         # print(f".. searching path {path}/{list(path)} and ignoring {ignore}")
@@ -186,12 +191,12 @@ class Contraption():
         
         reflectors[pos][heading] = True
 
-    def shine_light(self):
+    def shine_light(self, starting_pos=0, starting_dir=RIGHT):
         reflectors = self.reflectors
         # self.all_tiles_energized = [0]
 
         # trace to initial reflector
-        next_reflector, tiles_traversed = self.find_next_reflector(-1, RIGHT)
+        next_reflector, tiles_traversed = self.find_next_reflector(starting_pos, starting_dir, initial=True)
         self.all_tiles_energized += tiles_traversed
         new_beams = self.reflect_beam(next_reflector, RIGHT)
         reflectors[next_reflector][BEAMS] = new_beams
@@ -222,6 +227,7 @@ class Contraption():
 
         print(f"The number of tiles end up being energized is {tiles_energized}")
 
+        return tiles_energized
 
 if __name__ == "__main__":
     file = sys.argv[1]
@@ -229,3 +235,21 @@ if __name__ == "__main__":
     ctrap = Contraption()
     ctrap.read_contraption(file)
     ctrap.shine_light()
+
+    # -- Part 2 -------
+
+    # Create list of starting positions and directions
+    ncols = ctrap.ncols; nrows = ctrap.nrows
+    from_the_top    = [(t,DOWN) for t in range(ncols)]
+    from_the_left   = [(t,RIGHT) for t in range(0,ncols*nrows,ncols)]
+    from_the_right  = [(t,LEFT) for t in range(ncols-1,ncols*nrows,ncols)]
+    from_the_bottom = [(t,UP) for t in range((nrows-1)*ncols,ncols*nrows)]
+    starting_tiles = from_the_top + from_the_left + from_the_right + from_the_bottom
+
+    energized_by_start_pos= []
+    for  start in starting_tiles:
+        tiles_energized = ctrap.shine_light(starting_pos=start[0], starting_dir=start[1])
+        energized_by_start_pos.append(tiles_energized)
+
+    print(f"The largest number of tiles energized is {max(energized_by_start_pos)}")
+

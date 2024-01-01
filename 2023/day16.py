@@ -77,7 +77,7 @@ class Contraption():
         ncols = self.ncols
         nrows = self.nrows
         
-        print(f"Looking from {pos} heading {heading}..")
+        # print(f"Looking from {pos} heading {heading}..")
         match heading:
             case "left":
                 # indices of points to the left
@@ -85,7 +85,10 @@ class Contraption():
                 ignore = ['-']
             case "right":
                 # indices of points to the right
-                path = range(pos+1, (pos//ncols+1)*ncols, +1)
+                if pos == -1:
+                    path = range(0, ncols, +1)
+                else:
+                    path = range(pos+1, (pos//ncols+1)*ncols, +1)
                 ignore = ['-']
             case "up":
                 # indices of points upward
@@ -96,7 +99,7 @@ class Contraption():
                 path = range(pos+ncols, (nrows*ncols)+(pos%ncols), +ncols)
                 ignore = ['|']
 
-        print(f".. searching path {path}/{list(path)} and ignoring {ignore}")
+        # print(f".. searching path {path}/{list(path)} and ignoring {ignore}")
         for indx,step in enumerate(path):
             if (step in reflectors) and reflectors[step][TYPE] not in ignore:
                 traversed = list(path[:indx+1])
@@ -104,7 +107,7 @@ class Contraption():
                 # self.remove_beam_from_reflector(pos, heading)
 
                 # return next reflector
-                print(f".. found next reflector. {next_reflector}  {reflectors[next_reflector][TYPE]}")
+                # print(f".. found next reflector. {next_reflector}  {reflectors[next_reflector][TYPE]}")
                 return next_reflector, traversed
 
         # return next reflector as None since there is not one
@@ -129,14 +132,14 @@ class Contraption():
         # if beam coming into this reflector has arrived from same direction before
         # then don't reflect back out (as this would be looping the light)
         if reflectors[pos][heading_towards]:
-            print(f"Found repeated beam: {pos}  {heading_towards}")
+            # print(f"Found repeated beam: {pos}  {heading_towards}")
             return []
 
         # note incoming beam so we don't repeat in future
         self.record_beam(pos, heading_towards)
 
         type = reflectors[pos][TYPE]
-        print(f"Reflecting beam at {pos} heading towards {heading_towards} with {type}..")
+        # print(f"Reflecting beam at {pos} heading towards {heading_towards} with {type}..")
         match type:
             case '|':
                 match heading_towards:
@@ -225,14 +228,17 @@ class Contraption():
 
     def shine_light(self):
         reflectors = self.reflectors
-        self.all_tiles_energized = [0]
+        # self.all_tiles_energized = [0]
 
         # trace to initial reflector
-        next_reflector, tiles_traversed = self.find_next_reflector(0, RIGHT)
+        # import pdb;pdb.set_trace()
+        next_reflector, tiles_traversed = self.find_next_reflector(-1, RIGHT)
         self.all_tiles_energized += tiles_traversed
-        if next_reflector:
-            new_beams = self.reflect_beam(next_reflector, RIGHT)
-            reflectors[next_reflector][BEAMS] = new_beams
+        new_beams = self.reflect_beam(next_reflector, RIGHT)
+        reflectors[next_reflector][BEAMS] = new_beams
+        # if next_reflector:
+        #     new_beams = self.reflect_beam(next_reflector, RIGHT)
+        #     reflectors[next_reflector][BEAMS] = new_beams
 
         # while any beams
         while any(reflectors[pnt][BEAMS] for pnt in reflectors):
@@ -252,11 +258,12 @@ class Contraption():
 
         # debug output
         ate = list(set(self.all_tiles_energized))
-        print(f"{ate}")
+        # print(f"{ate}")
         nrows = self.nrows; ncols=self.ncols
         ate_map = ['#' if i in ate else '.' for i in range(ncols*nrows)]
         for r in range(nrows):
-            print(ate_map[r*ncols:r*ncols+ncols])
+            print(''.join(ate_map[r*ncols:r*ncols+ncols]))
+
         print(f"The number of tiles end up being energized is {tiles_energized}")
 
 

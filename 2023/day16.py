@@ -229,12 +229,12 @@ class Contraption():
         tiles_energized = len(set(self.all_tiles_energized))
 
         # debug output
-        # ate = list(set(self.all_tiles_energized))
-        # print(f"{ate}")
-        # nrows = self.nrows; ncols=self.ncols
-        # ate_map = ['#' if i in ate else '.' for i in range(ncols*nrows)]
-        # for r in range(nrows):
-        #     print(''.join(ate_map[r*ncols:r*ncols+ncols]))
+        ate = list(set(self.all_tiles_energized))
+        print(f"{ate}")
+        nrows = self.nrows; ncols=self.ncols
+        ate_map = ['#' if i in ate else '.' for i in range(ncols*nrows)]
+        for r in range(nrows):
+            print(''.join(ate_map[r*ncols:r*ncols+ncols]))
 
         return tiles_energized
 
@@ -243,9 +243,15 @@ if __name__ == "__main__":
 
     ctrap = Contraption()
     ctrap.read_contraption(file)
-    tiles_energized = ctrap.shine_light()
+    # tiles_energized = ctrap.shine_light()
+    # print(f"The number of tiles end up being energized is {tiles_energized}")
+
+    ctrap.reset_contraption()
+    tiles_energized = ctrap.shine_light(3, DOWN)
     print(f"The number of tiles end up being energized is {tiles_energized}")
 
+    # exit()
+    
     # -- Part 2 -------
     # Reset contraption
     ctrap.reset_contraption()
@@ -260,7 +266,7 @@ if __name__ == "__main__":
 
     energized_by_start_pos= []
     for start in starting_tiles:
-        # print(f"{start}")
+        print(f"{start}")
         tiles_energized = ctrap.shine_light(starting_pos=start[0], starting_dir=start[1])
         energized_by_start_pos.append(tiles_energized)
         ctrap.reset_contraption()

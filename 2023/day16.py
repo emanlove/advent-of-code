@@ -99,7 +99,7 @@ class Contraption():
         print(f".. searching path {path}/{list(path)} and ignoring {ignore}")
         for indx,step in enumerate(path):
             if (step in reflectors) and reflectors[step][TYPE] not in ignore:
-                traversed = path[:indx+1]
+                traversed = list(path[:indx+1])
                 next_reflector = step
                 # self.remove_beam_from_reflector(pos, heading)
 
@@ -108,7 +108,7 @@ class Contraption():
                 return next_reflector, traversed
 
         # return next reflector as None since there is not one
-        traversed = path
+        traversed = list(path)
         next_reflector = None
         # self.remove_beam_from_reflector(pos, heading)
 
@@ -229,7 +229,7 @@ class Contraption():
 
         # trace to initial reflector
         next_reflector, tiles_traversed = self.find_next_reflector(0, RIGHT)
-        self.all_tiles_energized.append(tiles_traversed)
+        self.all_tiles_energized += tiles_traversed
         if next_reflector:
             new_beams = self.reflect_beam(next_reflector, RIGHT)
             reflectors[next_reflector][BEAMS] = new_beams
@@ -240,19 +240,23 @@ class Contraption():
                 all_new_beams = []
                 for heading in reflectors[rindx][BEAMS]:
                     next_reflector, tiles_traversed = self.find_next_reflector(rindx, heading)
-                    self.all_tiles_energized.append(tiles_traversed)
+                    self.all_tiles_energized += tiles_traversed
                     if next_reflector:
                         new_beam = self.reflect_beam(next_reflector, heading)
                         self.next_reflector_beams[next_reflector] += new_beam
-                # # reset beams heading out of this reflector
-                # if all_new_beams: print(f"{rindx}  {all_new_beams}")
-                # reflectors[rindx][BEAMS] = list(set(all_new_beams))
                 # print(f"New beams heading out of {rindx}: {reflectors[rindx][BEAMS]}")
             # update beams heading out of the reflectors
             self.update_beams()
         # count up number of tiles
         tiles_energized = len(set(self.all_tiles_energized))
 
+        # debug output
+        ate = list(set(self.all_tiles_energized))
+        print(f"{ate}")
+        nrows = self.nrows; ncols=self.ncols
+        ate_map = ['#' if i in ate else '.' for i in range(ncols*nrows)]
+        for r in range(nrows):
+            print(ate_map[r*ncols:r*ncols+ncols])
         print(f"The number of tiles end up being energized is {tiles_energized}")
 
 

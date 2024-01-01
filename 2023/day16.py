@@ -68,7 +68,6 @@ class Contraption():
                 path = range(pos-ncols, (pos%ncols)-ncols, -ncols)  # up
 
                 path = range(pos+ncols, (nrows*ncols)+(pos%ncols), +ncols)  # down
-
         """
         reflectors = self.reflectors
         ncols = self.ncols
@@ -78,44 +77,19 @@ class Contraption():
         match heading:
             case "left":
                 # indices of points to the left
-                # range(pos, beginning of this row-1, -1)
-                # range(pos-1, (pos//NCOLS)*NCOLS)-1, -1)
                 path = range(pos-1, ((pos//ncols)*ncols)-1, -1)
                 ignore = ['-']
             case "right":
                 # indices of points to the right
-                # range(pos+1, (pos//NCOLS+1)*NCOLS), +1)
-                path = range(pos+1, (pos//ncols+1)*ncols, +1)  # indices of points to the right
+                path = range(pos+1, (pos//ncols+1)*ncols, +1)
                 ignore = ['-']
             case "up":
                 # indices of points upward
-                # !! - incorrect !!
-                # range(row above, 0, -num of cols)
-                # range(pos-NCOLS, 0, -NCOLS)
-                # ---------------------------
-                # !! - incorrect !!
-                # range(row above, col in first row, -num of cols)
-                # range(pos-NCOLS, pos%NCOLS, -NCOLS)
-                # ---------------------------
-                # range(row above, col in first row minus num of cols, -num of cols)
-                # range(pos-NCOLS, pos%NCOLS-NCOLS, -NCOLS)
-                path = range(pos-ncols, (pos%ncols)-ncols, -ncols)  # indices of points upward
+                path = range(pos-ncols, (pos%ncols)-ncols, -ncols)
                 ignore = ['|']
             case "down":
                 # indices of points downward
-                # !! - incorrect !!
-                # range(row below, num of rows, +num of cols)
-                # range(pos+NCOLS, NROWS, +NCOLS)
-                # ---------------------------
-                # !! - incorrect !!
-                # range(row below, col in last row, +num of cols)
-                # range(pos+NCOLS, ((nrows-1)*ncols)+pos%NCOLS, +NCOLS)
-                # ---------------------------
-                # range(row below, col in last row plus num of cols, +num of cols)
-                #                          or
-                # range(row below, number of coords plus current col, +num of cols)
-                # range(pos+NCOLS, ((nrows)*ncols)+pos%NCOLS, +NCOLS)
-                path = range(pos+ncols, (nrows*ncols)+(pos%ncols), +ncols)  # indices of points downward
+                path = range(pos+ncols, (nrows*ncols)+(pos%ncols), +ncols)
                 ignore = ['|']
 
         print(f".. searching path {path}/{list(path)} and ignoring {ignore}")
@@ -123,7 +97,7 @@ class Contraption():
             if (step in reflectors) and reflectors[step][TYPE] not in ignore:
                 traversed = path[:indx+1]
                 next_reflector = step
-                self.remove_beam_from_reflector(pos, heading)
+                # self.remove_beam_from_reflector(pos, heading)
 
                 # return next reflector
                 print(f".. found next reflector. {next_reflector}  {reflectors[next_reflector][TYPE]}")
@@ -132,7 +106,7 @@ class Contraption():
         # return next reflector as None since there is not one
         traversed = path
         next_reflector = None
-        self.remove_beam_from_reflector(pos, heading)
+        # self.remove_beam_from_reflector(pos, heading)
 
         return next_reflector, traversed
 
@@ -152,7 +126,7 @@ class Contraption():
         # then don't reflect back out (as this would be looping the light)
         if reflectors[pos][heading_towards]:
             print(f"Found repeated beam: {pos}  {heading_towards}")
-            return
+            return []
 
         # note incoming beam so we don't repeat in future
         self.record_beam(pos, heading_towards)
@@ -164,46 +138,56 @@ class Contraption():
                 match heading_towards:
                     case "left" | "right":
                         # split up and down
-                        self.add_beam(pos, UP)
-                        self.add_beam(pos, DOWN)
+                        return [UP, DOWN]
+                        # self.add_beam(pos, UP)
+                        # self.add_beam(pos, DOWN)
                     case _:
                         print(f"!!WARNING!! Should not be approching | ({pos}) from {heading_towards}")
             case '-':
                 match heading_towards:
                     case "up" | "down":
                         # split left and right
-                        self.add_beam(pos, LEFT)
-                        self.add_beam(pos, RIGHT)
+                        return [LEFT, RIGHT]
+                        # self.add_beam(pos, LEFT)
+                        # self.add_beam(pos, RIGHT)
                     case _:
                         print(f"!!WARNING!! Should not be approching - ({pos}) from {heading_towards}")
             case '\\':
                 match heading_towards:
                     case "left":
                         # reflect up
-                        self.add_beam(pos, UP)
+                        return [UP]
+                        # self.add_beam(pos, UP)
                     case "right":
                         # reflect down
-                        self.add_beam(pos, DOWN)
+                        return [DOWN]
+                        # self.add_beam(pos, DOWN)
                     case "up":
                         # reflect left
-                        self.add_beam(pos, LEFT)
+                        return [LEFT]
+                        # self.add_beam(pos, LEFT)
                     case "down":
                         # reflect right
-                        self.add_beam(pos, RIGHT)
+                        return [RIGHT]
+                        # self.add_beam(pos, RIGHT)
             case '/':
                 match heading_towards:
                     case "left":
                         # reflect down
-                        self.add_beam(pos, DOWN)
+                        return [DOWN]
+                        # self.add_beam(pos, DOWN)
                     case "right":
                         # reflect up
-                        self.add_beam(pos, UP)
+                        return [UP]
+                        # self.add_beam(pos, UP)
                     case "up":
                         # reflect right
-                        self.add_beam(pos, RIGHT)
+                        return [RIGHT]
+                        # self.add_beam(pos, RIGHT)
                     case "down":
                         # reflect left
-                        self.add_beam(pos, LEFT)
+                        return [LEFT]
+                        # self.add_beam(pos, LEFT)
 
     def add_beam(self, pos, going):
         reflectors = self.reflectors
@@ -230,17 +214,23 @@ class Contraption():
         next_reflector, tiles_traversed = self.find_next_reflector(0, RIGHT)
         self.all_tiles_energized.append(tiles_traversed)
         if next_reflector:
-            self.reflect_beam(next_reflector, RIGHT)
+            new_beams = self.reflect_beam(next_reflector, RIGHT)
+            reflectors[next_reflector][BEAMS] = new_beams
 
         # while any beams
         while any(reflectors[pnt][BEAMS] for pnt in reflectors):
             for rindx in reflectors:
+                all_new_beams = []
                 for heading in reflectors[rindx][BEAMS]:
                     next_reflector, tiles_traversed = self.find_next_reflector(rindx, heading)
                     self.all_tiles_energized.append(tiles_traversed)
                     if next_reflector:
-                        self.reflect_beam(next_reflector, heading)
-
+                        new_beam = self.reflect_beam(next_reflector, heading)
+                        all_new_beams += new_beam
+                # reset beams heading out of this reflector
+                if all_new_beams: print(f"{rindx}  {all_new_beams}")
+                reflectors[rindx][BEAMS] = list(set(all_new_beams))
+                # print(f"New beams heading out of {rindx}: {reflectors[rindx][BEAMS]}")
         # count up number of tiles
         tiles_energized = len(set(self.all_tiles_energized))
 

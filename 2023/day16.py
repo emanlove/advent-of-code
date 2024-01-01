@@ -198,8 +198,14 @@ class Contraption():
         # trace to initial reflector
         next_reflector, tiles_traversed = self.find_next_reflector(starting_pos, starting_dir, initial=True)
         self.all_tiles_energized += tiles_traversed
-        new_beams = self.reflect_beam(next_reflector, RIGHT)
-        reflectors[next_reflector][BEAMS] = new_beams
+        if next_reflector:
+            new_beams = self.reflect_beam(next_reflector, RIGHT)
+            reflectors[next_reflector][BEAMS] = new_beams
+        else:
+            # count up number of tiles
+            tiles_energized = len(set(self.all_tiles_energized))
+            return tiles_energized
+
 
         # while any beams reflect around contraption
         while any(reflectors[pnt][BEAMS] for pnt in reflectors):
@@ -225,8 +231,6 @@ class Contraption():
         # for r in range(nrows):
         #     print(''.join(ate_map[r*ncols:r*ncols+ncols]))
 
-        print(f"The number of tiles end up being energized is {tiles_energized}")
-
         return tiles_energized
 
 if __name__ == "__main__":
@@ -234,7 +238,8 @@ if __name__ == "__main__":
 
     ctrap = Contraption()
     ctrap.read_contraption(file)
-    ctrap.shine_light()
+    tiles_energized = ctrap.shine_light()
+    print(f"The number of tiles end up being energized is {tiles_energized}")
 
     # -- Part 2 -------
 
@@ -247,7 +252,8 @@ if __name__ == "__main__":
     starting_tiles = from_the_top + from_the_left + from_the_right + from_the_bottom
 
     energized_by_start_pos= []
-    for  start in starting_tiles:
+    for start in starting_tiles:
+        print(f"{start}")
         tiles_energized = ctrap.shine_light(starting_pos=start[0], starting_dir=start[1])
         energized_by_start_pos.append(tiles_energized)
 

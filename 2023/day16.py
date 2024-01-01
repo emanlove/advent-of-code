@@ -12,6 +12,7 @@ class Contraption():
         self.reflectors = {}
         self.ncols = None
         self.nrows = None
+        self.next_reflector_beams = {}
         self.all_tiles_energized = []
 
     def read_contraption (self, filename):
@@ -32,6 +33,9 @@ class Contraption():
                 self.reflectors[coord][UP] = False
                 self.reflectors[coord][DOWN] = False
                 self.reflectors[coord][BEAMS] = []
+
+        for rindx in self.reflectors:
+            self.next_reflector_beams[rindx] = []
 
     def find_next_reflector(self, pos, heading):
         """ Find the next reflector along a path
@@ -189,6 +193,19 @@ class Contraption():
                         return [LEFT]
                         # self.add_beam(pos, LEFT)
 
+    def reset_next_reflector_beams(self):
+        next_reflector_beams = self.next_reflector_beams
+        reflectors = self.reflectors
+        for rindx in next_reflector_beams:
+            next_reflector_beams[rindex] = []
+
+    def update_beams(self):
+        next_reflector_beams = self.next_reflector_beams
+        reflectors = self.reflectors
+        for rindx in next_reflector_beams:
+            reflectors[rindx][BEAMS] = list(set(next_reflector_beams[rindx]))
+            next_reflector_beams[rindx] = []
+
     def add_beam(self, pos, going):
         reflectors = self.reflectors
 
@@ -226,11 +243,13 @@ class Contraption():
                     self.all_tiles_energized.append(tiles_traversed)
                     if next_reflector:
                         new_beam = self.reflect_beam(next_reflector, heading)
-                        all_new_beams += new_beam
-                # reset beams heading out of this reflector
-                if all_new_beams: print(f"{rindx}  {all_new_beams}")
-                reflectors[rindx][BEAMS] = list(set(all_new_beams))
+                        self.next_reflector_beams[next_reflector] += new_beam
+                # # reset beams heading out of this reflector
+                # if all_new_beams: print(f"{rindx}  {all_new_beams}")
+                # reflectors[rindx][BEAMS] = list(set(all_new_beams))
                 # print(f"New beams heading out of {rindx}: {reflectors[rindx][BEAMS]}")
+            # update beams heading out of the reflectors
+            self.update_beams()
         # count up number of tiles
         tiles_energized = len(set(self.all_tiles_energized))
 

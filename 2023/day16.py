@@ -203,7 +203,7 @@ class Contraption():
         # trace to initial reflector
         next_reflector, tiles_traversed = self.find_next_reflector(starting_pos, starting_dir, initial=True)
         self.all_tiles_energized += tiles_traversed
-        if next_reflector:
+        if next_reflector is not None:
             new_beams = self.reflect_beam(next_reflector, starting_dir)
             reflectors[next_reflector][BEAMS] = new_beams
         else:

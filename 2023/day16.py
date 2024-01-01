@@ -104,27 +104,14 @@ class Contraption():
             if (step in reflectors) and reflectors[step][TYPE] not in ignore:
                 traversed = list(path[:indx+1])
                 next_reflector = step
-                # self.remove_beam_from_reflector(pos, heading)
-
-                # return next reflector
                 # print(f".. found next reflector. {next_reflector}  {reflectors[next_reflector][TYPE]}")
                 return next_reflector, traversed
 
         # return next reflector as None since there is not one
         traversed = list(path)
         next_reflector = None
-        # self.remove_beam_from_reflector(pos, heading)
 
         return next_reflector, traversed
-
-    def remove_beam_from_reflector(self, indx, heading):
-        # remove beam from reflector (conditional based upon pos in reflector - needed for initial start)
-        reflectors = self.reflectors
-
-        if indx in reflectors:
-            beam_indx = reflectors[indx][BEAMS].index(heading)
-            reflectors[indx][BEAMS].pop(beam_indx)
-
 
     def reflect_beam(self, pos, heading_towards):
         reflectors = self.reflectors
@@ -146,8 +133,6 @@ class Contraption():
                     case "left" | "right":
                         # split up and down
                         return [UP, DOWN]
-                        # self.add_beam(pos, UP)
-                        # self.add_beam(pos, DOWN)
                     case _:
                         print(f"!!WARNING!! Should not be approching | ({pos}) from {heading_towards}")
             case '-':
@@ -155,8 +140,6 @@ class Contraption():
                     case "up" | "down":
                         # split left and right
                         return [LEFT, RIGHT]
-                        # self.add_beam(pos, LEFT)
-                        # self.add_beam(pos, RIGHT)
                     case _:
                         print(f"!!WARNING!! Should not be approching - ({pos}) from {heading_towards}")
             case '\\':
@@ -164,43 +147,29 @@ class Contraption():
                     case "left":
                         # reflect up
                         return [UP]
-                        # self.add_beam(pos, UP)
                     case "right":
                         # reflect down
                         return [DOWN]
-                        # self.add_beam(pos, DOWN)
                     case "up":
                         # reflect left
                         return [LEFT]
-                        # self.add_beam(pos, LEFT)
                     case "down":
                         # reflect right
                         return [RIGHT]
-                        # self.add_beam(pos, RIGHT)
             case '/':
                 match heading_towards:
                     case "left":
                         # reflect down
                         return [DOWN]
-                        # self.add_beam(pos, DOWN)
                     case "right":
                         # reflect up
                         return [UP]
-                        # self.add_beam(pos, UP)
                     case "up":
                         # reflect right
                         return [RIGHT]
-                        # self.add_beam(pos, RIGHT)
                     case "down":
                         # reflect left
                         return [LEFT]
-                        # self.add_beam(pos, LEFT)
-
-    def reset_next_reflector_beams(self):
-        next_reflector_beams = self.next_reflector_beams
-        reflectors = self.reflectors
-        for rindx in next_reflector_beams:
-            next_reflector_beams[rindex] = []
 
     def update_beams(self):
         next_reflector_beams = self.next_reflector_beams
@@ -208,15 +177,6 @@ class Contraption():
         for rindx in next_reflector_beams:
             reflectors[rindx][BEAMS] = list(set(next_reflector_beams[rindx]))
             next_reflector_beams[rindx] = []
-
-    def add_beam(self, pos, going):
-        reflectors = self.reflectors
-
-        if going in reflectors[pos][BEAMS]:
-            print(f"Note: Finding duplicate beams")            
-            return
-        
-        reflectors[pos][BEAMS].append(going)
 
     def record_beam(self, pos, heading):
         reflectors = self.reflectors
@@ -231,16 +191,12 @@ class Contraption():
         # self.all_tiles_energized = [0]
 
         # trace to initial reflector
-        # import pdb;pdb.set_trace()
         next_reflector, tiles_traversed = self.find_next_reflector(-1, RIGHT)
         self.all_tiles_energized += tiles_traversed
         new_beams = self.reflect_beam(next_reflector, RIGHT)
         reflectors[next_reflector][BEAMS] = new_beams
-        # if next_reflector:
-        #     new_beams = self.reflect_beam(next_reflector, RIGHT)
-        #     reflectors[next_reflector][BEAMS] = new_beams
 
-        # while any beams
+        # while any beams reflect around contraption
         while any(reflectors[pnt][BEAMS] for pnt in reflectors):
             for rindx in reflectors:
                 all_new_beams = []
@@ -257,12 +213,12 @@ class Contraption():
         tiles_energized = len(set(self.all_tiles_energized))
 
         # debug output
-        ate = list(set(self.all_tiles_energized))
+        # ate = list(set(self.all_tiles_energized))
         # print(f"{ate}")
-        nrows = self.nrows; ncols=self.ncols
-        ate_map = ['#' if i in ate else '.' for i in range(ncols*nrows)]
-        for r in range(nrows):
-            print(''.join(ate_map[r*ncols:r*ncols+ncols]))
+        # nrows = self.nrows; ncols=self.ncols
+        # ate_map = ['#' if i in ate else '.' for i in range(ncols*nrows)]
+        # for r in range(nrows):
+        #     print(''.join(ate_map[r*ncols:r*ncols+ncols]))
 
         print(f"The number of tiles end up being energized is {tiles_energized}")
 

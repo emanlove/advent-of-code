@@ -12,19 +12,13 @@ class Contraption():
         self.reflectors = {}
         self.ncols = None
         self.nrows = None
+        self.flattened_contraption = None
+
+    def reset_contraption(self):
         self.next_reflector_beams = {}
         self.all_tiles_energized = []
 
-    def read_contraption (self, filename):
-        with open(filename,'r') as fh:
-            lines = [line.rstrip('\n') for line in fh]
-    
-        flattened = ''.join(lines)
-
-        self.ncols = len(lines[0])
-        self.nrows = len(lines)
-
-        for coord,tile in enumerate(flattened):
+        for coord,tile in enumerate(self.flattened_contraption):
             if tile != '.':
                 self.reflectors[coord] = {}
                 self.reflectors[coord][TYPE] = tile
@@ -36,6 +30,17 @@ class Contraption():
 
         for rindx in self.reflectors:
             self.next_reflector_beams[rindx] = []
+
+    def read_contraption(self, filename):
+        with open(filename,'r') as fh:
+            lines = [line.rstrip('\n') for line in fh]
+    
+        self.flattened_contraption = ''.join(lines)
+
+        self.ncols = len(lines[0])
+        self.nrows = len(lines)
+
+        self.reset_contraption()
 
     def find_next_reflector(self, pos, heading, initial=False):
         """ Find the next reflector along a path
@@ -242,6 +247,8 @@ if __name__ == "__main__":
     print(f"The number of tiles end up being energized is {tiles_energized}")
 
     # -- Part 2 -------
+    # Reset contraption
+    ctrap.reset_contraption()
 
     # Create list of starting positions and directions
     ncols = ctrap.ncols; nrows = ctrap.nrows
@@ -253,9 +260,10 @@ if __name__ == "__main__":
 
     energized_by_start_pos= []
     for start in starting_tiles:
-        print(f"{start}")
+        # print(f"{start}")
         tiles_energized = ctrap.shine_light(starting_pos=start[0], starting_dir=start[1])
         energized_by_start_pos.append(tiles_energized)
+        ctrap.reset_contraption()
 
     print(f"The largest number of tiles energized is {max(energized_by_start_pos)}")
 

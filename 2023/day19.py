@@ -63,6 +63,18 @@ lnx{m>1548:A,A}
 pv{a>1716:R,A}
  [qqz hdj pv] R   [s>1350 s<2771 m<1801 m<839] a>1716
  [qqz hdj pv] A   [s>1350 s<2771 m<1801 m<839] a<1717
+
+
+
+rules{name}[{category, operation, value, action}]
+
+rules{name}{my_rules[{category, operation, value, action} ...]
+            rules_leading_to_me{catergory}{'>'|'<'}[ values ...]
+            parentage[oldest .. direct parent]
+
+actions{parentage}{action 'A'|'R'
+                   uncondensed_rules{catergory}{'>'|'<'}[ values ...]
+                   processed_rules{catergory}{'>'|'<'} value
 """
 import sys
 import re
@@ -84,10 +96,13 @@ def read_rules_and_parts(filename):
             category,value = re.split('[<>]',condition)
             value = int(value)
             operation = condition[len(category)]
-            r = {'cat': category, 'oper': operation, 'val': value}
-            print(f"[ {rule} ]  {category}  {operation}  {value}  {action}")            
+            r = {'cat': category, 'oper': operation, 'val': value, 'act': action}
+            print(f"{name} [ {rule} ]  {category}  {operation}  {value}  {action}")
+            rules[name].append(r)
         final_action = ruleset[-1]
-        print(f"{final_action}")
+        r = {'oper': final_action}
+        rules[name].append(r)
+        # print(f"{final_action}")
     
     # parse parts
     parts = []
@@ -99,8 +114,21 @@ def read_rules_and_parts(filename):
         #     rating = int(rating)
         parts.append(part)
 
+    # simplify rules
+    # trace path through rules
+    rules_to_parse = ['in']
+    while rules_to_parse:
+        next_rules_to_parse = []
+        for parsing_rule in rules_to_parse:
+            for this_rule in rules[parsing_rule]:
+                # add to ?? [category]['>'|'<'] list of values
+                oper = this_rule['oper']
+                opposite_oper = '<' if oper=='>' else '>'
+                opposite_modifier = +1 if oper=='>' else -1
+
     # import pdb;pdb.set_trace()
     for part in parts:
+        pass
 
     print(f"the sum of the power of these sets is ")
 

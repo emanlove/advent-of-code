@@ -1,25 +1,5 @@
 import sys
 
-def read_calibration(filename):
-    with open(filename, 'r') as fh:
-        lines = [line.rstrip('\n') for line in fh]
-
-    digits = []
-    for line in lines:
-        nums = [c for c in line if ord(c) < 58]
-        digit = int(nums[0] + nums[-1])
-        digits.append(digit)
-
-    print(sum(digits))
-
-
-NUMBER_STRINGS = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
-                  '1', '2', '3', '4', '5', '6', '7', '8', '9']
-NUMBER_DICT = {'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5', 'six': '6', 'seven': '7', 'eight': '8',
-               'nine': '9',
-               '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9'}
-
-
 def read_rotations(filename):
     with open(filename, 'r') as fh:
         lines = [line.rstrip('\n') for line in fh]
@@ -37,11 +17,21 @@ def read_rotations(filename):
         else:
             print(f"unknown direction {direction}")
 
-        pointer = pointer % 100
-        print(f"Dial points to {pointer}")
+        if adjustment//100:
+            print(f"{adjustment//100}")
+        # print(f"{pointer} {abs(pointer // 100)}")
+        # num_zeros += abs(pointer // 100)
 
-        if pointer == 0:
-            num_zeros += 1
+        pointer = pointer % 100
+        # print(f"Dial points to {pointer}")
+
+        # if pointer == 0:
+        #     num_zeros += 1
+        # if (pointer % 100) == 0:
+        #     num_zeros += 1
+        # else:
+        #     num_zeros += abs(pointer // 100)
+        num_zeros += abs(pointer // 100)
 
     return num_zeros
 

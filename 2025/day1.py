@@ -26,7 +26,6 @@ def read_rotations(filename):
 
     num_zeros = 0
     pointer = 50
-    dial = range(0,99)
     for line in lines:
         direction = line[0]
         adjustment = int(line[1:])
@@ -37,7 +36,9 @@ def read_rotations(filename):
             pointer += adjustment
         else:
             print(f"unknown direction {direction}")
-        pointer = dial[pointer]
+
+        pointer = pointer % 100
+        print(f"Dial points to {pointer}")
 
         if pointer == 0:
             num_zeros += 1

@@ -17,12 +17,7 @@ def read_rotations(filename):
         else:
             print(f"unknown direction {direction}")
 
-        if adjustment//100:
-            print(f"{adjustment//100}")
-        # print(f"{pointer} {abs(pointer // 100)}")
-        # num_zeros += abs(pointer // 100)
-
-        pointer = pointer % 100
+        # pointer = pointer % 100
         # print(f"Dial points to {pointer}")
 
         # if pointer == 0:
@@ -32,6 +27,13 @@ def read_rotations(filename):
         # else:
         #     num_zeros += abs(pointer // 100)
         num_zeros += abs(pointer // 100)
+        if pointer == 0:
+                num_zeros -= 1
+        if pointer == 100:
+                num_zeros += 1
+        pointer = pointer % 100
+        # if pointer == 0:
+        #     num_zeros -= 1
 
     return num_zeros
 

@@ -11,9 +11,29 @@ def read_rotations(filename):
         adjustment = int(line[1:])
 
         if direction == 'L':
-            pointer -= adjustment
+            if pointer > adjustment:
+                continue
+            if pointer == (adjustment % 100):
+                num_zeros += 1
+                num_zeros += adjustment % 100
+            if pointer < (adjustment % 100):
+                num_zeros += 1
+                num_zeros += adjustment % 100
+            pointer -= (adjustment % 100)
+            pointer = pointer % 100
+
         elif direction == 'R':
-            pointer += adjustment
+            if (100 - pointer) > adjustment:
+                continue
+            if (100 - pointer) == (adjustment % 100):
+                num_zeros += 1
+                num_zeros += adjustment % 100
+            if (100 - pointer) < (adjustment % 100):
+                num_zeros += 1
+                num_zeros += adjustment % 100
+            pointer += (adjustment % 100)
+            pointer = pointer % 100
+
         else:
             print(f"unknown direction {direction}")
 
@@ -26,12 +46,14 @@ def read_rotations(filename):
         #     num_zeros += 1
         # else:
         #     num_zeros += abs(pointer // 100)
-        num_zeros += abs(pointer // 100)
-        if pointer == 0:
-                num_zeros -= 1
-        if pointer == 100:
-                num_zeros += 1
-        pointer = pointer % 100
+
+        # num_zeros += abs(pointer // 100)
+        # if pointer == 0:
+        #         num_zeros -= 1
+        # if pointer == 100:
+        #         num_zeros += 1
+        # pointer = pointer % 100
+
         # if pointer == 0:
         #     num_zeros -= 1
 

@@ -49,7 +49,9 @@ def part_2(filename):
                         # print(f"{int(str(digit)*len_pair)}")
                         invalid_ids.append(int(str(digit)*len_pair))
                 case 2:
-                    lower_double = int(first_str[:1]); upper_double = int(last_str[:1])
+                    print(f"{pair}")
+                    lower_double = int(first_str[:2]); upper_double = int(last_str[:2])
+                    print(f"lower: {lower_double}  upper: {upper_double}")
                     # lower_double = first_str[:1]; upper_double = last_str[:1]
                     num_pairs = len_pair // 2
                     # lower_bound_double = lower_double if int(lower_double*num_pairs)>first else str(int(lower_double)+1)

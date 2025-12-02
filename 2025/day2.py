@@ -44,8 +44,8 @@ def part_2(filename):
             upper_digits = int(last_str[:factor])
             # print(f"lower: {lower_double}  upper: {upper_double}")
             num_seqs = len_pair // factor
-            lower_bound_digits = lower_digits if int(str(lower_digits) * num_seqs) > first else lower_digits + 1
-            upper_bound_digits = upper_digits if int(str(upper_digits) * num_seqs) < last else upper_digits - 1
+            lower_bound_digits = lower_digits if int(str(lower_digits) * num_seqs) >= first else lower_digits + 1
+            upper_bound_digits = upper_digits if int(str(upper_digits) * num_seqs) <= last else upper_digits - 1
             for digit in range(lower_bound_digits, upper_bound_digits + 1):
                 print(f"{int(str(digit) * num_seqs)}")
                 invalid_ids.append(int(str(digit) * num_seqs))
@@ -79,6 +79,7 @@ def part_2(filename):
             #     case _:
             #         print('Unhandled factor')
 
+    invalid_ids = list(set(invalid_ids))
     return sum(invalid_ids)
 
 def get_first_last_pairs(filename):

@@ -16,14 +16,19 @@ def read_rotations_part2(filename):
 
         if direction == 'L':
             next = this - adjustment
+            next = next % 100
+            if next > this:
+                num_zeros += 1
+            elif next == this and this != 0:
+                num_zeros += 1
         elif direction == 'R':
             next = this + adjustment
-
-        if (next < 1) or (next > 99):
-            num_zeros += 1
-            this = next % 100
-        else:
-            this = next
+            next = next % 100
+            if next < this:
+                num_zeros += 1
+            elif next == this and this != 0:
+                num_zeros += 1
+        this = next
 
     return num_zeros
 

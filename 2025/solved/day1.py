@@ -1,6 +1,38 @@
 import sys
 
 
+
+def retry_part2(filename):
+    with open(filename, 'r') as fh:
+        lines = [line.rstrip('\n') for line in fh]
+
+    num_zeros = 0
+    pointer = 50
+    for line in lines:
+        direction = line[0]
+        adjustment = int(line[1:])
+
+        # print(f"{pointer} {direction}{adjustment} {num_zeros}")
+        num_of_full_rotations = adjustment // 100
+        leftover_adjustment = adjustment % 100
+
+        dist_to_edge = pointer if direction == 'L' else 100 - pointer
+        # print(f"dist {dist_to_edge} left {leftover_adjustment}")
+        # if pointer is zero and adjustment is a multiple of 100
+        if pointer == 0 and leftover_adjustment == 0:
+            num_zeros += num_of_full_rotations
+            new_pointer = 0
+        # if pointer is non zero and adjustment is greater than or equal to distance to edge
+        if pointer and (leftover_adjustment >= dist_to_edge):
+            num_zeros += 1
+            new_pointer = pointer - leftover_adjustment if direction == 'L' else pointer + leftover_adjustment
+        else:
+            new_pointer = pointer - leftover_adjustment if direction == 'L' else pointer + leftover_adjustment
+        # print(f"new {new_pointer}")
+        pointer = new_pointer % 100
+
+    return num_zeros
+
 def read_rotations_part2(filename):
     with open(filename, 'r') as fh:
         lines = [line.rstrip('\n') for line in fh]
@@ -114,5 +146,6 @@ if __name__ == "__main__":
     file = sys.argv[1]
 
     # zeros = read_rotations(file)
-    zeros = read_rotations_part2(file)
+    # zeros = read_rotations_part2(file)
+    zeros = retry_part2(file)
     print(f"The number of zeros is {zeros}")

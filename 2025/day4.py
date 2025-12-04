@@ -16,7 +16,8 @@ def read_paper_roll_map(filename):
     nrows = len(lines)
     ncols = len(lines[0])
 
-    indx_around = [-ncols-1, -ncols, -ncols+1, -1, +1, +ncols-1, +ncols, +ncols+1]
+    # indx_around = [-ncols-1, -ncols, -ncols+1, -1, +1, +ncols-1, +ncols, +ncols+1]
+    indx_around = [(-1,-1),(-1,0),(-1,+1),(0,-1),(0,+1),(+1,-1),(+1,0),(+1,+1)]  # [(row,col)]
 
     flattened_map = ''.join(lines)
     len_map = len(flattened_map)
@@ -27,9 +28,12 @@ def read_paper_roll_map(filename):
             continue
         surrounding_spots = []
         for indx in indx_around:
-            check = pos+indx
-            # print(f"{pos}: {check}")
-            if check>-1 and check<len_map and flattened_map[check]=='@':
+            rc = (pos//ncols,pos%ncols)
+            check_row = rc[0]+indx[0]
+            check_col = rc[1]+indx[1]
+            this_pos = check_row*ncols + check_col
+            # print(f"{pos}: {flattened_map[this_pos]}")
+            if (0 <= check_row < nrows) and (0 <= check_col < ncols) and flattened_map[this_pos]=='@':
                 surrounding_spots.append(1)
             else:
                 surrounding_spots.append(0)

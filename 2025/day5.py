@@ -28,7 +28,7 @@ def simplify_sort_fresh_ranges(fresh_ranges):
     # following assumes list of ranges is sorted
     simplified_fresh_ranges = []
     this = sorted_fresh_ranges[0]
-    for indx,next in enumerate(sorted_fresh_ranges[1:]):
+    for next in sorted_fresh_ranges[1:]:
         this_start = this[0]; this_end = this[1]
         next_start = next[0]; next_end = next[1]
 
@@ -60,7 +60,7 @@ def sort_fresh_from_spoiled(list_of_fresh, check_these):
 
     for check_this in check_these:
         increase_index_by = 0
-        for subindx, rnge in enumerate(list_of_fresh[list_pntr:]):
+        for rnge in list_of_fresh[list_pntr:]:
             start = rnge[0]; end = rnge[1]
             if check_this < start:
                 # this one is before all sorted ranges

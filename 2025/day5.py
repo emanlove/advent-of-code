@@ -79,6 +79,12 @@ def sort_fresh_from_spoiled(list_of_fresh, check_these):
 
     return num_fresh_ingredients
 
+def count_num_fresh_ingredients(list_of_fresh):
+    total_num_of_fresh_ingredients = 0
+    for rnge in list_of_fresh:
+        total_num_of_fresh_ingredients += rnge[1]-rnge[0]+1
+
+    return total_num_of_fresh_ingredients
 
 if __name__ == "__main__":
     file = sys.argv[1]
@@ -88,3 +94,5 @@ if __name__ == "__main__":
     sorted_check_list = sorted(check_list)
     num_fresh_ingredients = sort_fresh_from_spoiled(sorted_fresh_list, sorted_check_list)
     print(f"The total number of fresh ingredients is {num_fresh_ingredients}")
+    total_num_of_fresh_ingredients = count_num_fresh_ingredients(sorted_fresh_list)
+    print(f"The total number of possible fresh ingredients is {total_num_of_fresh_ingredients}")

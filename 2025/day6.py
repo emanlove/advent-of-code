@@ -42,7 +42,7 @@ def read_math_problems_as_cephalopod(filename):
     problem_columns = [(s,e) for s,e in zip(indexs[:-1],indexs[1:])]
     problem_map = [(r,o) for r,o in zip(problem_columns, [o for _, o in operator_columns])]
 
-    print(f"{problem_map}")
+    # print(f"{problem_map}")
     results = []
     for problem in problem_map:
         data = []
@@ -52,7 +52,7 @@ def read_math_problems_as_cephalopod(filename):
             digit_str = digit_str.strip()
             if digit_str:
                 data.append(int(digit_str))
-        print(f"{oper} {data}")
+        # print(f"{oper} {data}")
         match oper:
             case '*':
                 result = math.prod(data)
@@ -71,5 +71,5 @@ if __name__ == "__main__":
     data = read_math_problems(file)
     total = perform_cephalopod_math(data)
     print(f"The total result of the math problems is {total}")
-    true_data = read_math_problems_as_cephalopod(file)
-    print(f"The total result using cephalopod math is {true_data}")
+    true_total = read_math_problems_as_cephalopod(file)
+    print(f"The total result using cephalopod math is {true_total}")

@@ -60,8 +60,6 @@ def read_math_problems_as_cephalopod(filename):
                 result = sum(data)
         results.append(result)
 
-
-
     return sum(results)
 
 

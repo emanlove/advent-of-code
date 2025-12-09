@@ -26,7 +26,8 @@ def read_junction_boxes(filename, n_closest_boxes):
 
     circuits = [{sorted_distance_matrix[0][1],sorted_distance_matrix[0][2]}]
 
-    for dist, boxA, boxB in sorted_distance_matrix[1:n_closest_boxes+1]:
+    # for dist, boxA, boxB in sorted_distance_matrix[1:]:
+    for dist, boxA, boxB in sorted_distance_matrix[1:n_closest_boxes]:
         new_pair = {boxA, boxB}
         found_circuit = False
         for circuit in circuits:
@@ -43,10 +44,14 @@ def read_junction_boxes(filename, n_closest_boxes):
 
 if __name__ == "__main__":
     file = sys.argv[1]
-    n_closest_boxes = int(sys.argv[2])
+    if len(sys.argv) == 3:
+        n_closest_boxes = int(sys.argv[2])+1
+    else:
+        n_closest_boxes = None
 
     circuits = read_junction_boxes(file, n_closest_boxes)
     len_circuits = [len(c) for c in circuits]
     top_three_circuit_lengths = sorted(len_circuits, reverse=True)[:3]
+    print(f"The the three largest circuits are {top_three_circuit_lengths}")
     product_of_top_three_circuits = math.prod(top_three_circuit_lengths)
-    print(f"The total result of the math problems is {product_of_top_three_circuits}")
+    print(f"The product of the three largest circuits sizes is {product_of_top_three_circuits}")

@@ -26,9 +26,9 @@ def calculate_num_splits(S, untouched_reflectors, tilted_diagram):
     started_beams = [S]
 
     num_splits = 0
-    # while(started_beams):
-    debug_while = 50
-    while debug_while:
+    # debug_while = 50
+    # while debug_while:
+    while(started_beams):
         # print(f"{started_beams}")
         add_beams = []
         remove_beams = []
@@ -50,8 +50,8 @@ def calculate_num_splits(S, untouched_reflectors, tilted_diagram):
                     ref_index = untouched_reflectors.index(next_reflector)
                     untouched_reflectors.pop(ref_index)
                 else:
-                    # num_splits -= 1
-                    print("?? - should not have this ..")
+                    num_splits -= 1
+                    # print("?? - should not have this ..")
                 new_beams = [(next_reflector[0]-1,next_reflector[1]), (next_reflector[0]+1,next_reflector[1])]
                 for new_beam in new_beams:
                     if new_beam not in started_beams:
@@ -89,7 +89,9 @@ def calculate_num_splits(S, untouched_reflectors, tilted_diagram):
                 # raise Exception(f"Unable to find beam {remove} that needs to be removed.\n{started_beams}")
         for added in add_beams:
             started_beams.append(added)
-        debug_while -= 1
+        # print(f"{started_beams}")
+        # print(f"{untouched_reflectors}")
+        # debug_while -= 1
 
     return num_splits
 

@@ -30,7 +30,7 @@ def calculate_num_splits(S, untouched_reflectors, tilted_diagram):
     debug_while = 25
     while debug_while:
         for beam in started_beams:
-            print(f"{beam}")
+            # print(f"{beam}")
             added_beams = []
             removed_beams = []
             # from starting point (beam) check for any reflectors in remaining
@@ -43,7 +43,11 @@ def calculate_num_splits(S, untouched_reflectors, tilted_diagram):
                 # started_beams.pop(indx)
             else:
                 num_splits += 1
-                next_reflector = (beam[0], tilted_diagram[beam[0]][beam[1]:].index('^'))
+                next_reflector = (beam[0], tilted_diagram[beam[0]][beam[1]:].index('^')+beam[1])
+                print(f"{next_reflector}")
+                print(f"{untouched_reflectors}")
+                ref_index = untouched_reflectors.index(next_reflector)
+                untouched_reflectors.pop(ref_index)
                 new_beams = [(next_reflector[0]-1,next_reflector[1]), (next_reflector[0]+1,next_reflector[1])]
                 removed_beams.append(beam)
                 for new_beam in new_beams:
